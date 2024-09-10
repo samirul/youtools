@@ -1,6 +1,7 @@
 '''
     Made customer user models for user 
 '''
+
 import uuid
 import requests
 from django.db import models

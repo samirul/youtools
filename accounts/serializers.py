@@ -1,6 +1,7 @@
 '''
    Serializer for views.py in accounts 
 '''
+
 from rest_framework import serializers
 from accounts.models import User
 
