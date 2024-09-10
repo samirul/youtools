@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
+from data.database import DATABASES # imported database # pylint: disable=unused-import
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -47,7 +51,7 @@ ADDED_APPS = [
 THIRDPARTY_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
-    'dj_rest_auth'
+    'dj_rest_auth',
     'allauth',
     'allauth.account',
     'dj_rest_auth.registration',
@@ -71,6 +75,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "allauth.account.middleware.AccountMiddleware"
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
@@ -118,12 +123,12 @@ WSGI_APPLICATION = "youtools.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
 
 
 # Password validation
