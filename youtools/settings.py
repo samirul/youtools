@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'django.contrib.sites',
 ]
 
 ADDED_APPS = [
@@ -45,11 +46,21 @@ ADDED_APPS = [
 
 THIRDPARTY_APPS = [
     'rest_framework',
+    'rest_framework.authtoken',
+    'dj_rest_auth'
+    'allauth',
+    'allauth.account',
+    'dj_rest_auth.registration',
+    'allauth.socialaccount',
     'corsheaders',
 
 ]
 
+# Added Own created apps
 INSTALLED_APPS += ADDED_APPS
+
+# Added 3rd party apps/library
+INSTALLED_APPS += THIRDPARTY_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
