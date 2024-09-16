@@ -3,6 +3,7 @@ import os
 import pika
 import django
 from pika.exceptions import AMQPConnectionError
+from converter.binary_to_png import upload_image_from_byte_image_array
 
 # Set up Django environment
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "youtools.settings")
@@ -22,17 +23,18 @@ def connect_consumer():
 
         def callback(ch, method, properties, body):
             try:
-                print("hello")
+                print("message receiving....")
                 if properties.type == 'created_new_image':
-                    print("yes")
+                    print("Task executing, please wait....")
                     data = body.decode('utf-8')
                     converted_data = json.loads(data)
-                    print("Received data:", converted_data)
+                    spilt_name = str(converted_data['image_name']).split()
+                    binary_to_image=upload_image_from_byte_image_array(byte_array=converted_data['image_data'], file_name=f"result_txt_2_img_{'_'.join(spilt_name)}.png")
                     
                     # Create the image record in the database
                     Images.objects.create(
                         id=converted_data['_id'],
-                        image_data=converted_data['image_data'],
+                        image_data=binary_to_image,
                         image_name=converted_data['image_name']
                     )
                     print("Image created successfully")
@@ -43,7 +45,7 @@ def connect_consumer():
 
         # Start consuming messages from 'django_app' queue
         channel.basic_consume(queue='youtools_queue', on_message_callback=callback, auto_ack=True)
-        print('Waiting for messages. To exit press CTRL+C')
+        print('Waiting for messages....')
         channel.start_consuming()
 
     except AMQPConnectionError as e:

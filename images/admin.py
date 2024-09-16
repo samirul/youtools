@@ -6,5 +6,5 @@ from .models import Images
 @admin.register(Images)
 class ImagesModelAdmin(admin.ModelAdmin):
     list_display = [
-      'id', 'image_data','image_name'
+      'id','image_name','image_data'
     ]
