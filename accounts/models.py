@@ -7,8 +7,9 @@ import requests
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.dispatch import receiver
-from allauth.account.signals import user_logged_in
 from django.core.files.base import ContentFile
+from allauth.account.signals import user_logged_in, user_signed_up
+from .producers import publish
 
 class UserManager(BaseUserManager):
     def create_user(self, username, email, password=None):
@@ -100,3 +101,14 @@ def save_google_profile_image(sender, request, user, **kwargs):
                     ContentFile(response.content)
                 )
                 user.save()
+
+@receiver(user_signed_up, sender=User)
+def publish_user_info(sender, request, user, **kwargs):
+    registered_user = User.objects.get(email=user)
+    user_send_dict = {
+        "id": str(registered_user.id),
+        "username": registered_user.username,
+        "email": registered_user.email
+    }
+    publish('user_is_created', user_send_dict)
+    

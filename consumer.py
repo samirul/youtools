@@ -37,7 +37,7 @@ def connect_consumer():
                         image_data=binary_to_image,
                         image_name=converted_data['image_name']
                     )
-                    print("Image created successfully")
+                    print("Image uploaded successfully")
             
             except Exception as e:
                 # Log or handle errors during message processing
