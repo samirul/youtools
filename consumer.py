@@ -41,6 +41,21 @@ def connect_consumer():
                         user=user
                     )
                     print("Image uploaded successfully")
+
+                if properties.type == 'image_data_Delete_from_flask':
+                    print("Task executing, please wait....")
+                    ids = body.decode('utf-8')
+                    converted_id = json.loads(ids)
+                    try:
+                        image = Images.objects.filter(id=converted_id)
+                        if image:
+                            image.delete()
+                            print("Image deleted successfully")
+                        else:
+                            print(f"Image with {converted_id} not found")
+                    except Exception as e:
+                        print(f"Something is wrong: {e}")
+                    
             
             except Exception as e:
                 # Log or handle errors during message processing
