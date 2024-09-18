@@ -1,5 +1,8 @@
 from django.db import models
+from django.dispatch import receiver
+from django.db.models.signals import post_delete
 from accounts.models import User
+from accounts.producers import publish
 
 # Create your models here.
 class Images(models.Model):
@@ -11,3 +14,8 @@ class Images(models.Model):
 
     def __str__(self) -> str:
         return str(self.image_name)
+    
+@receiver(post_delete, sender=Images)
+def delete_data_on_model_after_deleting_data_from_admin_pannel(sender, instance, **kwargs):
+    publish("delete_images_from_database", instance.id)
+    
