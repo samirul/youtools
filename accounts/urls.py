@@ -10,7 +10,7 @@ from rest_framework_simplejwt.views import (
 from accounts.views import GoogleLoginViews, GetUser
 
 urlpatterns = [
-    path("google/", GoogleLoginViews.as_view(), name='google'),
+    path("api/social/login/google/", GoogleLoginViews.as_view(), name='google'),
     path('accounts/', include('allauth.urls')),
     path('user/<str:token>/', GoogleLoginViews.as_view(), name='user'),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),

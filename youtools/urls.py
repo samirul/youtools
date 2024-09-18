@@ -13,7 +13,7 @@ urlpatterns = [
     path("api/auth/", include('dj_rest_auth.urls')),
     path("password-reset/confirm/<uidb64>/<token>/", TemplateView.as_view(template_name="account/email/password_reset_confirm.html"), name='password_reset_confirm'),
     path('api/registration/', include('dj_rest_auth.registration.urls')),
-    path("api/social/login/", include('accounts.urls')),
+    path("accounts/", include('accounts.urls')),
     path("images/", include('images.urls')),
 ]
 

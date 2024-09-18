@@ -1,10 +1,12 @@
 from django.db import models
+from accounts.models import User
 
 # Create your models here.
 class Images(models.Model):
     id = models.CharField(primary_key=True)
     image_data = models.ImageField(upload_to="images")
     image_name = models.CharField(max_length=120)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     objects = models.Manager()
 
     def __str__(self) -> str:

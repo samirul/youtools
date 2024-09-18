@@ -9,6 +9,7 @@ from converter.binary_to_png import upload_image_from_byte_image_array
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "youtools.settings")
 django.setup()
 from images.models import Images
+from accounts.models import User
 
 # RabbitMQ connection parameters
 params = pika.URLParameters(os.environ.get('RABBITMQ_URL'))
@@ -30,12 +31,14 @@ def connect_consumer():
                     converted_data = json.loads(data)
                     spilt_name = str(converted_data['image_name']).split()
                     binary_to_image=upload_image_from_byte_image_array(byte_array=converted_data['image_data'], file_name=f"result_txt_2_img_{'_'.join(spilt_name)}.png")
+                    user = User.objects.get(id=converted_data['user_id'])
                     
                     # Create the image record in the database
                     Images.objects.create(
                         id=converted_data['_id'],
                         image_data=binary_to_image,
-                        image_name=converted_data['image_name']
+                        image_name=converted_data['image_name'],
+                        user=user
                     )
                     print("Image uploaded successfully")
             
