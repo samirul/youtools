@@ -20,7 +20,7 @@ def publish(method, body):
         # Publish the message to the 'django_app' queue
         channel.basic_publish(
             exchange='',
-            routing_key='send_data_flasks',
+            routing_key='send_data_text2image',
             body=json.dumps(body), 
             properties=properties 
         )

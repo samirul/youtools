@@ -2,7 +2,7 @@ from django.db import models
 from django.dispatch import receiver
 from django.db.models.signals import post_delete, pre_delete
 from accounts.models import User
-from accounts.producers import publish
+from producers.producers_text2image import publish
 
 # Create your models here.
 class Images(models.Model):
