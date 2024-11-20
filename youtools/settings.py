@@ -38,10 +38,11 @@ INSTALLED_APPS = [
 ADDED_APPS = [
     "accounts",
     "images",
+    "sentiment_analysis",
 ]
 
 THIRDPARTY_APPS = [
-     "rest_framework",
+    "rest_framework",
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     "rest_framework.authtoken",
