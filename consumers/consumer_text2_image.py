@@ -20,7 +20,7 @@ def connect_consumer():
     try:
         connection = pika.BlockingConnection(params)
         channel = connection.channel()
-        channel.queue_declare(queue='youtools-queue')
+        channel.queue_declare(queue='youtools-queue_text2image')
 
         def callback(ch, method, properties, body):
             try:
@@ -62,7 +62,7 @@ def connect_consumer():
                 print(f"Error processing message: {e}")
 
         # Start consuming messages from 'django_app' queue
-        channel.basic_consume(queue='youtools_queue', on_message_callback=callback, auto_ack=True)
+        channel.basic_consume(queue='youtools-queue_text2image', on_message_callback=callback, auto_ack=True)
         print('Waiting for messages....')
         channel.start_consuming()
 
