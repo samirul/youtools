@@ -12,7 +12,7 @@ def connection_rabbitMq():
     channel = connection.channel()
     return channel
 
-def publish(method, body):
+def publish_text2_image(method, body):
     channel = connection_rabbitMq()
     properties = pika.BasicProperties(type=method)
 

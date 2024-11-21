@@ -9,7 +9,10 @@ from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.dispatch import receiver
 from django.core.files.base import ContentFile
 from allauth.account.signals import user_logged_in, user_signed_up
-from producers.producers_text2image import publish
+from producers.producers_text2image import publish_text2_image
+from producers.producers_sentiment_analysis import RabbitMQConnection
+
+publish_sentiment_analysis = RabbitMQConnection()
 
 class UserManager(BaseUserManager):
     def create_user(self, username, email, password=None):
@@ -110,5 +113,6 @@ def publish_user_info(sender, request, user, **kwargs):
         "username": registered_user.username,
         "email": registered_user.email
     }
-    publish('user_is_created', user_send_dict)
+    publish_text2_image('user_is_created', user_send_dict)
+    publish_sentiment_analysis.publish_sentiment_analysis('user_is_created', user_send_dict)
     
