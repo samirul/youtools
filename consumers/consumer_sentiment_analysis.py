@@ -5,6 +5,7 @@ import pika
 import django
 from pika.exceptions import AMQPConnectionError
 
+
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(project_root)
 
@@ -13,6 +14,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "youtools.settings")
 django.setup()
 
 from sentiment_analysis.models import SentiMentAnalysis
+from accounts.models import User
 
 class RabbitMQConsumer:
     def __init__(self):
@@ -32,13 +34,15 @@ class RabbitMQConsumer:
                         print("Task executing, please wait....")
                         data = body.decode('utf-8')
                         converted_data = json.loads(data)
+                        user = User.objects.get(id=converted_data['user'])
                         SentiMentAnalysis.objects.create(
                             id = converted_data['_id'],
                             video_title = converted_data['video_title'],
                             video_url = converted_data['video_url'],
                             comment = converted_data['comment'],
                             main_result = converted_data['main_result'],
-                            other_result = converted_data['other_result']
+                            other_result = converted_data['other_result'],
+                            user = user
                         )
                         print("Data from sentiment-Analysis flask saved Successfully.")
                     
