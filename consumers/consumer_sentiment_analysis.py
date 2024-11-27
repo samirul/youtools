@@ -59,6 +59,18 @@ class RabbitMQConsumer:
                             category=category
                         )
                         print("Data from sentiment-Analysis flask saved Successfully.")
+
+                    if properties.type == 'delete_data_from_youtools_django':
+                        data = body.decode('utf-8')
+                        converted_data = json.loads(data)
+                        try:
+                            sentiment_analysis = SentiMentAnalysis.objects.select_related('user').filter(id=converted_data).first()
+                            if sentiment_analysis:
+                                sentiment_analysis.delete()
+                            print("Data from sentiment-Analysis deleted successfully.")
+                        except Exception as e:
+                            print(e)
+                            print("Data from sentiment-Analysis failed to delete.")
                     
                 except Exception as e:
                         # Log or handle errors during message processing
