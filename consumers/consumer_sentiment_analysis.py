@@ -13,7 +13,7 @@ sys.path.append(project_root)
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "youtools.settings")
 django.setup()
 
-from sentiment_analysis.models import SentiMentAnalysis
+from sentiment_analysis.models import SentiMentAnalysis, Category
 from accounts.models import User
 
 class RabbitMQConsumer:
@@ -30,11 +30,24 @@ class RabbitMQConsumer:
             def callback(ch, method, properties, body):
                 try:
                     print("message receiving....")
+                    if properties.type == 'task_category_saved':
+                        print("Task executing, please wait....")
+                        data = body.decode('utf-8')
+                        converted_data = json.loads(data)
+                        category = Category.objects.filter(id=converted_data['_id']).first()
+                        if not category:
+                            Category.objects.create(
+                                id = converted_data['_id'],
+                                category_name = converted_data['category_name']
+                            )
+                        print("Data from sentiment-Analysis category flask saved Successfully.")
+
                     if properties.type == 'task_data_saved':
                         print("Task executing, please wait....")
                         data = body.decode('utf-8')
                         converted_data = json.loads(data)
                         user = User.objects.get(id=converted_data['user'])
+                        category = Category.objects.get(id=converted_data['category'])
                         SentiMentAnalysis.objects.create(
                             id = converted_data['_id'],
                             video_title = converted_data['video_title'],
@@ -42,7 +55,8 @@ class RabbitMQConsumer:
                             comment = converted_data['comment'],
                             main_result = converted_data['main_result'],
                             other_result = converted_data['other_result'],
-                            user = user
+                            user = user,
+                            category=category
                         )
                         print("Data from sentiment-Analysis flask saved Successfully.")
                     

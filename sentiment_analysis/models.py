@@ -6,6 +6,25 @@ from django.db import models
 from accounts.models import User
 
 # Create your models here.
+
+class Category(models.Model):
+    """Models for storing Sentiment analysis data
+       category from rabbitMq
+
+    Args:
+        models (models): django model
+
+    Returns:
+        _type_: Will display category title in django admin pannel
+    """
+    id = models.CharField(primary_key=True)
+    category_name = models.CharField(max_length=255)
+    objects = models.Manager()
+
+    def __str__(self) -> str:
+        return str(self.category_name)
+
+
 class SentiMentAnalysis(models.Model):
     """Models for storing Sentiment analysis data
        from rabbitMq 
@@ -23,6 +42,7 @@ class SentiMentAnalysis(models.Model):
     main_result = models.CharField(max_length=100)
     other_result = models.CharField(max_length=100)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
     objects = models.Manager()
 
     def __str__(self) -> str:
