@@ -3,7 +3,12 @@
 """
 
 from django.db import models
+from django.dispatch import receiver
+from django.db.models.signals import post_delete
 from accounts.models import User
+from producers.producers_sentiment_analysis import RabbitMQConnection
+
+rabbit_mq = RabbitMQConnection()
 
 # Create your models here.
 
@@ -19,10 +24,16 @@ class Category(models.Model):
     """
     id = models.CharField(primary_key=True)
     category_name = models.CharField(max_length=255)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     objects = models.Manager()
 
     def __str__(self) -> str:
         return str(self.category_name)
+    
+@receiver(post_delete, sender=Category)
+def delete_data_on_model_after_deleting_data_from_admin_pannel(sender, instance, **kwargs):
+    if not Category.objects.exists():
+        rabbit_mq.publish_sentiment_analysis("delete_sentiment_analysis_category_data_from_flask", instance.id)
 
 
 class SentiMentAnalysis(models.Model):
@@ -47,3 +58,9 @@ class SentiMentAnalysis(models.Model):
 
     def __str__(self) -> str:
         return str(self.video_title)
+    
+
+@receiver(post_delete, sender=SentiMentAnalysis)
+def delete_category_data_on_model_after_deleting_data_from_admin_pannel(sender, instance, **kwargs):
+    if not SentiMentAnalysis.objects.exists():
+        rabbit_mq.publish_sentiment_analysis("delete_sentiment_analysis_data_from_flask", instance.id)
