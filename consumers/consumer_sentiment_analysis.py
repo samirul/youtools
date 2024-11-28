@@ -34,7 +34,7 @@ class RabbitMQConsumer:
                         print("Task executing, please wait....")
                         data = body.decode('utf-8')
                         converted_data = json.loads(data)
-                        category = Category.objects.filter(id=converted_data['_id']).first()
+                        category = Category.objects.select_related('user').filter(id=converted_data['_id']).first()
                         if not category:
                             Category.objects.create(
                                 id = converted_data['_id'],
@@ -71,6 +71,20 @@ class RabbitMQConsumer:
                         except Exception as e:
                             print(e)
                             print("Data from sentiment-Analysis failed to delete.")
+
+                    if properties.type == 'delete_data_and_category_from_django_category':
+                        data = body.decode('utf-8')
+                        converted_data = json.loads(data)
+                        try:
+                            category = Category.objects.select_related('user').filter(id=converted_data).first()
+                            sentiment_analysis = SentiMentAnalysis.objects.select_related('user').filter(category=category.id)
+                            if category:
+                                category.delete()
+                                sentiment_analysis.delete()
+                            print("Data from category and sentiment-Analysis deleted successfully.")
+                        except Exception as e:
+                            print(e)
+                            print("Data from category and sentiment-Analysis failed to delete.")
                     
                 except Exception as e:
                         # Log or handle errors during message processing
