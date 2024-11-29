@@ -35,10 +35,12 @@ class RabbitMQConsumer:
                         data = body.decode('utf-8')
                         converted_data = json.loads(data)
                         category = Category.objects.select_related('user').filter(id=converted_data['_id']).first()
+                        user = User.objects.get(id=converted_data['user'])
                         if not category:
                             Category.objects.create(
                                 id = converted_data['_id'],
-                                category_name = converted_data['category_name']
+                                category_name = converted_data['category_name'],
+                                user = user
                             )
                         print("Data from sentiment-Analysis category flask saved Successfully.")
 
