@@ -1,15 +1,20 @@
+import sys
 import json
 import os
 import pika
 import django
 from pika.exceptions import AMQPConnectionError
-from converter.binary_to_png import upload_image_from_byte_image_array
+
+
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.append(project_root)
 
 # Set up Django environment
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "youtools.settings")
 django.setup()
 from images.models import Images
 from accounts.models import User
+from converter.binary_to_png import upload_image_from_byte_image_array
 
 # RabbitMQ connection parameters
 params = pika.URLParameters(os.environ.get('RABBITMQ_URL'))
