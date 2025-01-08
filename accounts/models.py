@@ -1,3 +1,118 @@
-from django.db import models
+'''
+    Made customer user models for user 
+'''
 
-# Create your models here.
+import uuid
+import requests
+from django.db import models
+from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
+from django.dispatch import receiver
+from django.core.files.base import ContentFile
+from allauth.account.signals import user_logged_in, user_signed_up
+from producers.producers_text2image import publish_text2_image
+from producers.producers_sentiment_analysis import RabbitMQConnection
+
+publish_sentiment_analysis = RabbitMQConnection()
+
+class UserManager(BaseUserManager):
+    def create_user(self, username, email, password=None):
+
+        if not email:
+            raise ValueError('User must have an email address')
+        
+        user = self.model(
+            username=username,
+            email=self.normalize_email(email),
+        )
+
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+        
+
+    def create_superuser(self, username, email, password):
+
+        user = self.create_user(
+            username=username,
+            email=email,
+            password=password,
+            
+        )
+        
+        user.is_admin = True
+        user.is_active = True
+        user.save(using=self._db)
+        return user
+    
+
+
+
+class User(AbstractBaseUser):
+    email = models.EmailField(
+        verbose_name='Email',
+        max_length=255,
+        unique=True,
+    )
+    id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
+    username = models.CharField(max_length=100, unique = True)
+    profilePic = models.ImageField(upload_to='profile-pic', default="default.png")
+    is_active = models.BooleanField(default=True)
+    is_admin = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    objects = UserManager()
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+
+    def get_all_permissions(self, user=None):
+        if user.is_admin:
+            return set()
+
+    def __str__(self):
+        return str(self.email)
+
+    def has_perm(self, perm, obj=None):
+        return self.is_admin
+
+    def has_module_perms(self, app_label):
+        return True
+
+    @property
+    def is_staff(self):
+        return self.is_admin
+    
+
+@receiver(user_logged_in, sender=User) 
+def save_google_profile_image(sender, request, user, **kwargs):
+    '''
+        Added signal for saving user profile picture automatically 
+        If user login using google login only else will stay as default.png
+    '''
+    social_account = user.socialaccount_set.filter(provider='google').first()
+    pic = User.objects.get(email=user)
+    if social_account:
+        extra_data = social_account.extra_data
+        profile_image_url = extra_data.get('picture')
+        
+        if profile_image_url and pic.profilePic =='default.png':
+            response = requests.get(profile_image_url, timeout=5)
+            if response.status_code == 200:
+                user.profilePic.save(
+                    f"{user.username}__google_user_profile.jpg",
+                    ContentFile(response.content)
+                )
+                user.save()
+
+@receiver(user_signed_up, sender=User)
+def publish_user_info(sender, request, user, **kwargs):
+    registered_user = User.objects.get(email=user)
+    user_send_dict = {
+        "id": str(registered_user.id),
+        "username": registered_user.username,
+        "email": registered_user.email
+    }
+    publish_text2_image('user_is_created', user_send_dict)
+    publish_sentiment_analysis.publish_sentiment_analysis('user_is_created', user_send_dict)
+    
