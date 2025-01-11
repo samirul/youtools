@@ -3,6 +3,7 @@ from BaseID.models import BaseIdModel
 
 # Create your models here.
 class ProductList(BaseIdModel):
+    product_image = models.ImageField(upload_to='media/products/images/')
     product_name = models.CharField(max_length=150, null=False, blank=False)
     product_description = models.TextField(max_length=255, null=False, blank=False)
     product_url = models.CharField(max_length=255)
