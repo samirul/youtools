@@ -42,6 +42,7 @@ ADDED_APPS = [
     "sentiment_analysis",
     "BaseID",
     "products",
+    "others"
 ]
 
 THIRDPARTY_APPS = [

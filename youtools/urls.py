@@ -16,6 +16,7 @@ urlpatterns = [
     path("accounts/", include('accounts.urls')),
     path("api/", include('api_gateway_microservices.urls')),
     path("api/products/", include('products.urls')),
+    path("api/others/", include('products.urls')),
 ]
 
 if settings.DEBUG:
