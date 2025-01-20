@@ -3,7 +3,8 @@ from .models import TopBanner
 
 
 class TopBannerViewSerializer(serializers.ModelSerializer):
-    model = TopBanner
-    fields = ['id', 'banner_image', 'banner_text']
+    class Meta:
+        model = TopBanner
+        fields = ['id', 'banner_image', 'banner_text']
 
     
