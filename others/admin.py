@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import (TopBanner, QuickLinksFooter, NavigationLinksFooter, SocialLinksFooter,
+from .models import (TopBanner, LinksFooterCategory, LinksFooter, SocialLinksFooter,
                      TitleFooter, CopyRightFooter)
 
 # Register your models here.
@@ -9,28 +9,28 @@ class OthersModelAdmin(admin.ModelAdmin):
       'id','banner_text'
     ]
 
-@admin.register(QuickLinksFooter)
-class QuickLinksFooterModelAdmin(admin.ModelAdmin):
+@admin.register(LinksFooterCategory)
+class LinksFooterCategoryModelAdmin(admin.ModelAdmin):
     list_display = [
-      'id','quicklinks_title','quicklinks_url'
+      'id','category_name'
     ]
 
-@admin.register(NavigationLinksFooter)
-class NavigationLinksFooterModelAdmin(admin.ModelAdmin):
+@admin.register(LinksFooter)
+class LinksFooterModelAdmin(admin.ModelAdmin):
     list_display = [
-      'id','navigation_title','navigation_url'
+      'id','links_title','category'
     ]
 
 @admin.register(SocialLinksFooter)
 class SocialLinksFooterModelAdmin(admin.ModelAdmin):
     list_display = [
-      'id','social_icon','social_url','social_label'
+      'id','social_label'
     ]
 
 @admin.register(TitleFooter)
 class TitleFooterModelAdmin(admin.ModelAdmin):
     list_display = [
-      'id','footer_title','footer_description'
+      'id','footer_title'
     ]
 
 @admin.register(CopyRightFooter)
