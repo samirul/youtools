@@ -1,8 +1,8 @@
 from django.urls import path
-from .views import ProductViews
+from .views import ProductViews, ProductFrontViews
 urlpatterns = [
-    # text2image-microservice
     path("product-items/", ProductViews.as_view()),
+    path("product-items/front/", ProductFrontViews.as_view()),
     
    
 ]
