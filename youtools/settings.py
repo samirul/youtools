@@ -96,7 +96,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "allauth.account.middleware.AccountMiddleware"
+    "allauth.account.middleware.AccountMiddleware",
+    "api_gateway_microservices.middleware.MoveJWTRefreshCookieIntoTheBody",
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -217,7 +218,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
@@ -258,7 +259,7 @@ REST_AUTH = {
     'USE_JWT': True,
     'JWT_AUTH_HTTPONLY':True,
     'JWT_AUTH_COOKIE': 'access_token',
-    'JWT_AUTH_REFRESH_COOKIE': 'refresh_token',
+    'JWT_AUTH_REFRESH_COOKIE': 'refresh',
     'JWT_AUTH_SECURE': True,
     'JWT_AUTH_SAMESITE': 'Lax',
     'LOGIN_SERIALIZER': 'dj_rest_auth.serializers.LoginSerializer',
@@ -286,4 +287,4 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
-EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
