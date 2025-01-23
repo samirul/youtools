@@ -40,6 +40,9 @@ ADDED_APPS = [
     "api_gateway_microservices",
     "images",
     "sentiment_analysis",
+    "BaseID",
+    "products",
+    "others"
 ]
 
 THIRDPARTY_APPS = [
@@ -94,7 +97,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "allauth.account.middleware.AccountMiddleware"
+    "allauth.account.middleware.AccountMiddleware",
+    "api_gateway_microservices.middleware.MoveJWTRefreshCookieIntoTheBody",
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -205,8 +209,8 @@ REST_USE_JWT = True #  For Using Json Web Token
 STATIC_URL = "/static/"
 MEDIA_URL = '/media/'
 
-STATIC_ROOT = "/vol/web/static"
-MEDIA_ROOT = "/vol/web/media"
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -215,7 +219,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=20),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
@@ -254,9 +258,11 @@ SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin-allow-popups"
 
 REST_AUTH = {
     'USE_JWT': True,
-    'JWT_AUTH_HTTPONLY':False,
+    'JWT_AUTH_HTTPONLY':True,
     'JWT_AUTH_COOKIE': 'access_token',
-    'JWT_AUTH_REFRESH_COOKIE': 'refresh_token',
+    'JWT_AUTH_REFRESH_COOKIE': 'refresh',
+    'JWT_AUTH_SECURE': True,
+    'JWT_AUTH_SAMESITE': 'Lax',
     'LOGIN_SERIALIZER': 'dj_rest_auth.serializers.LoginSerializer',
     'REGISTER_SERIALIZER': 'dj_rest_auth.registration.serializers.RegisterSerializer'
 } 
@@ -282,4 +288,4 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
-EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
