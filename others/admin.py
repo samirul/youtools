@@ -1,6 +1,6 @@
 """
-  Added models from others app inside admin so can register inside control pannel(can view data from
-  django admin pannel.)
+  Added models from others app inside admin so can register inside control panel(can view data from
+  django admin panel).
 """
 from django.contrib import admin
 from .models import (TopBanner, LinksFooterCategory, SocialLinksFooterCategory,
