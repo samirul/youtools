@@ -1,3 +1,6 @@
+"""
+    Added Microservice Architecture api links(API Gateway).
+"""
 import requests 
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -7,9 +10,26 @@ from .serializers import GenerateImagesSerializers, GetCommentsAndAnalysisCommen
 
 # text2image microservice
 
-class text2image_generate_Image(APIView):
+class Text2ImageGenerateImage(APIView):
+    """Generate Image from the text.
+
+    Args:
+        APIView (Class): Django Rest Framework(DRF) API View.
+
+    """
     permission_classes = [IsAuthenticated]
     def post(self, request):
+        """ Will send POST request to the api server for generating image.
+
+        Args:
+            request (Parameters): Django request.
+
+        Returns:
+            Response: If user is not logged in and then will return Not authorized (401).
+            If user is logged in and no error is occurred and then will return OK (200) and json data.
+            If user is logged in or even not logged in and some error occurred then will
+            return Bad Request (400).
+        """
         try:
             access_token = request.COOKIES.get('access_token')
             serializer = GenerateImagesSerializers(data=request.data)
@@ -26,9 +46,26 @@ class text2image_generate_Image(APIView):
             return Response({"error": "Something is wrong."}, status=status.HTTP_400_BAD_REQUEST)
         
 
-class text2Image_get_all_images(APIView):
+class Text2ImageGetAllImages(APIView):
+    """Retrieve all the images.
+
+    Args:
+        APIView (Class): Django Rest Framework(DRF) API View.
+
+    """
     permission_classes = [IsAuthenticated]
     def get(self, request):
+        """Will send GET request to the api server for getting all the images.
+
+        Args:
+            request (Parameters): Django request.
+
+        Returns:
+            Response: If user is not logged in and then will return Not authorized (401).
+            If user is logged in and no error is occurred and then will return OK (200) and json data.
+            If user is logged in or even not logged in and some error occurred then will
+            return Bad Request (400).
+        """
         try:
             access_token = request.COOKIES.get('access_token')
             api_link = "http://localhost:81/all-images/"
@@ -41,9 +78,27 @@ class text2Image_get_all_images(APIView):
             return Response({"error": "Something is wrong."}, status=status.HTTP_400_BAD_REQUEST)
         
     
-class text2Image_get_single_image(APIView):
+class Text2ImageGetSingleImageById(APIView):
+    """Retrieve single image.
+
+    Args:
+        APIView (Class): Django Rest Framework(DRF) API View.
+
+    """
     permission_classes = [IsAuthenticated]
     def get(self, request, ids):
+        """Will send GET request to the api server for getting single image by id.
+
+        Args:
+            request (Parameters): Django request.
+            ids (Parameters): Image id.
+
+        Returns:
+            Response: If user is not logged in and then will return Not authorized (401).
+            If user is logged in and no error is occurred and then will return OK (200) and json data.
+            If user is logged in or even not logged in and some error occurred then will
+            return Bad Request (400).
+        """
         try:
             access_token = request.COOKIES.get('access_token')
             api_link = f"http://localhost:81/image/{ids}/"
@@ -56,9 +111,27 @@ class text2Image_get_single_image(APIView):
             return Response({"error": "Something is wrong."}, status=status.HTTP_400_BAD_REQUEST)
         
 
-class text2Image_delete_single_image(APIView):
+class Text2ImageDeleteSingleImageById(APIView):
+    """Delete single image.
+
+    Args:
+        APIView (Class): Django Rest Framework(DRF) API View.
+
+    """
     permission_classes = [IsAuthenticated]
     def delete(self, request, ids):
+        """Will send DELETE request to the api server for delete single image by id.
+
+        Args:
+            request (Parameters): Django request.
+            ids (Parameters): Image id.
+
+        Returns:
+            Response: If user is not logged in and then will return Not authorized (401).
+            If user is logged in and no error is occurred and then will return no content (204) and no json data.
+            If user is logged in or even not logged in and some error occurred then will
+            return Bad Request (400).
+        """
         try:
             access_token = request.COOKIES.get('access_token')
             api_link = f"http://localhost:81/image/delete/{ids}/"
@@ -71,9 +144,28 @@ class text2Image_delete_single_image(APIView):
             return Response({"error": "Something is wrong."}, status=status.HTTP_400_BAD_REQUEST)
         
 
-class text2Image_task_status_progress(APIView):
+class Text2ImageTaskStatusProgressByTaskId(APIView):
+    """Image generation celery task progress.
+
+    Args:
+        APIView (Class): Django Rest Framework(DRF) API View.
+
+    """
     permission_classes = [IsAuthenticated]
     def get(self, request, task_ids):
+        """Will send GET request to the api server for getting celery task progress.
+
+
+        Args:
+            request (Parameters): Django request.
+            task_ids (Parameters): Celery Task Id.
+
+        Returns:
+            Response: If user is not logged in and then will return Not authorized (401).
+            If user is logged in and no error is occurred and then will return OK (200) and json data.
+            If user is logged in or even not logged in and some error occurred then will
+            return Bad Request (400).
+        """
         try:
             access_token = request.COOKIES.get('access_token')
             api_link = f"http://localhost:81/task_status/{task_ids}/"
@@ -88,9 +180,30 @@ class text2Image_task_status_progress(APIView):
 
 # sentiment-analysis microservice
 
-class sentiment_analysis_fetch_comments_and_analysis(APIView):
+class SentimentAnalysisFetchCommentsAndAnalysis(APIView):
+    """Sentiment-Analysis from youtube comments.
+
+    Args:
+        APIView (Class): Django Rest Framework(DRF) API View.
+
+    """
     permission_classes = [IsAuthenticated]
     def post(self, request):
+        """Will send POST request to analysis comments from youtube.
+
+        Args:
+            request (Parameters): Django request.
+
+        Raises:
+            ValueError (URL): Throw if no url is found.
+            ValueError (MAX_LEN): Throw if no Max length is found.
+
+        Returns:
+            Response: If user is not logged in and then will return Not authorized (401).
+            If user is logged in and no error is occurred and then will return OK (200) and json data.
+            If user is logged in or even not logged in and some error occurred then will
+            return Bad Request (400).
+        """
         try:
             access_token = request.COOKIES.get('access_token')
             serializer = GetCommentsAndAnalysisCommentsSerializers(data=request.data)
@@ -112,9 +225,27 @@ class sentiment_analysis_fetch_comments_and_analysis(APIView):
             return Response({"error": "Something is wrong."}, status=status.HTTP_400_BAD_REQUEST)
         
 
-class sentiment_analysis_fetch_all_results_by_single_category(APIView):
+class SentimentAnalysisFetchAllResultsBySingleCategory(APIView):
+    """Retrieve analyzed results by categories.
+
+    Args:
+        APIView (Class): Django Rest Framework(DRF) API View.
+
+    """
     permission_classes = [IsAuthenticated]
     def get(self, request, ids):
+        """Will send GET request to the api server for getting all the results.
+
+        Args:
+            request (Parameters): Django request.
+            ids (Parameters): Category id.
+
+        Returns:
+            Response: If user is not logged in and then will return Not authorized (401).
+            If user is logged in and no error is occurred and then will return OK (200) and json data.
+            If user is logged in or even not logged in and some error occurred then will
+            return Bad Request (400).
+        """
         try:
             access_token = request.COOKIES.get('access_token')
             api_link = f"http://localhost:82/all-youtube-comments-results/{ids}/"
@@ -127,9 +258,27 @@ class sentiment_analysis_fetch_all_results_by_single_category(APIView):
             return Response({"error": "Something is wrong."}, status=status.HTTP_400_BAD_REQUEST)
         
 
-class sentiment_analysis_get_single_result_by_id(APIView):
+class SentimentAnalysisGetSingleResultById(APIView):
+    """Retrieve analyzed single result by id.
+
+    Args:
+        APIView (Class): Django Rest Framework(DRF) API View.
+
+    """
     permission_classes = [IsAuthenticated]
     def get(self, request, ids):
+        """Will send GET request to the api server for getting single result.
+
+        Args:
+            request (Parameters): Django request.
+            ids (Parameters): Analyzed id.
+
+        Returns:
+            Response: If user is not logged in and then will return Not authorized (401).
+            If user is logged in and no error is occurred and then will return OK (200) and json data.
+            If user is logged in or even not logged in and some error occurred then will
+            return Bad Request (400).
+        """
         try:
             access_token = request.COOKIES.get('access_token')
             api_link = f"http://localhost:82/get-youtube-comment-result/{ids}/"
@@ -142,9 +291,28 @@ class sentiment_analysis_get_single_result_by_id(APIView):
             return Response({"error": "Something is wrong."}, status=status.HTTP_400_BAD_REQUEST)
         
 
-class sentiment_analysis_delete_single_result_by_id(APIView):
+class SentimentAnalysisDeleteSingleResultById(APIView):
+    """Delete analyzed result by id.
+
+    Args:
+        APIView (Class): Django Rest Framework(DRF) API View.
+
+    """
     permission_classes = [IsAuthenticated]
     def delete(self, request, ids):
+        """Will send DELETE request to the api server for deleting a single result.
+
+        Args:
+            request (Parameters): Django request.
+            ids (Parameters): Analyzed id.
+
+        Returns:
+            Returns:
+            Response: If user is not logged in and then will return Not authorized (401).
+            If user is logged in and no error is occurred and then will return no content (204) and no json data.
+            If user is logged in or even not logged in and some error occurred then will
+            return Bad Request (400).
+        """
         try:
             access_token = request.COOKIES.get('access_token')
             api_link = f"http://localhost:82/delete-comment/{ids}/"
@@ -157,9 +325,26 @@ class sentiment_analysis_delete_single_result_by_id(APIView):
             return Response({"error": "Something is wrong."}, status=status.HTTP_400_BAD_REQUEST)
         
         
-class sentiment_analysis_all_categories(APIView):
+class SentimentAnalysisAllCategories(APIView):
+    """Get all the categories.
+
+    Args:
+        APIView (Class): Django Rest Framework(DRF) API View.
+
+    """
     permission_classes = [IsAuthenticated]
     def get(self, request):
+        """Will send GET request to the api server for getting all the categories.
+
+        Args:
+            request (Parameters): Django request.
+
+        Returns:
+            Response: If user is not logged in and then will return Not authorized (401).
+            If user is logged in and no error is occurred and then will return OK (200) and json data.
+            If user is logged in or even not logged in and some error occurred then will
+            return Bad Request (400).
+        """
         try:
             access_token = request.COOKIES.get('access_token')
             api_link = f"http://localhost:82/all-categories/"
@@ -172,9 +357,28 @@ class sentiment_analysis_all_categories(APIView):
             return Response({"error": "Something is wrong."}, status=status.HTTP_400_BAD_REQUEST)
         
         
-class sentiment_analysis_delete_single_category_by_id(APIView):
+class SentimentAnalysisDeleteSingleCategoryById(APIView):
+    """Delete category.
+
+    Args:
+        APIView (_type_): _description_
+
+    """
     permission_classes = [IsAuthenticated]
     def delete(self, request, ids):
+        """Will send DELETE request to the api server for deleting a single category.
+
+        Args:
+            request (Parameters): Django request.
+            ids (Parameters): category id.
+
+        Returns:
+            Returns:
+            Response: If user is not logged in and then will return Not authorized (401).
+            If user is logged in and no error is occurred and then will return no content (204) and no json data.
+            If user is logged in or even not logged in and some error occurred then will
+            return Bad Request (400).
+        """
         try:
             access_token = request.COOKIES.get('access_token')
             api_link = f"http://localhost:82/delete-category/{ids}/"
@@ -187,9 +391,27 @@ class sentiment_analysis_delete_single_category_by_id(APIView):
             return Response({"error": "Something is wrong."}, status=status.HTTP_400_BAD_REQUEST)
         
 
-class sentiment_analysis_task_status_progress(APIView):
+class SentimentAnalysisTaskStatusProgress(APIView):
+    """Sentiment analysis celery task progress.
+
+    Args:
+        APIView (Class): Django Rest Framework(DRF) API View.
+
+    """
     permission_classes = [IsAuthenticated]
     def get(self, request, task_ids):
+        """Will send GET request to the api server for getting celery task progress.
+
+        Args:
+            request (Parameters): Django request.
+            task_ids (Parameters): Celery Task Id.
+
+        Returns:
+            Response: If user is not logged in and then will return Not authorized (401).
+            If user is logged in and no error is occurred and then will return OK (200) and json data.
+            If user is logged in or even not logged in and some error occurred then will
+            return Bad Request (400).
+        """
         try:
             access_token = request.COOKIES.get('access_token')
             api_link = f"http://localhost:82/task_status/{task_ids}/"
