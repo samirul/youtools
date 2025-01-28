@@ -1,3 +1,9 @@
+"""
+    This RabbitMQ Consumer is a subscriber from the publisher
+    Sentiment-Analysis flask app. Data will come from the Sentiment-Analysis
+    flask app through the RabbitMQ Queue(FIFO) and will interact with django.  
+"""
+
 import json
 import os
 import sys
@@ -12,15 +18,18 @@ sys.path.append(project_root)
 # Set up Django environment
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "youtools.settings")
 django.setup()
-
+# Importing django models after django setup so we
+# can access django models properly outside django projects. 
 from sentiment_analysis.models import SentiMentAnalysis, Category
 from accounts.models import User
 
 class RabbitMQConsumer:
+    """Created the class for getting messages from the RabbitMQ Queue."""
     def __init__(self):
         self.rabbitmq_url = os.environ.get('RABBITMQ_URL')
 
     def connect_consumer(self):
+        """For connecting and waiting to get messages from the producer."""
         try:
             params = pika.URLParameters(self.rabbitmq_url)
             connection = pika.BlockingConnection(params)
@@ -28,6 +37,16 @@ class RabbitMQConsumer:
             channel.queue_declare(queue='youtools-queue_sentiment_analysis')
 
             def callback(ch, method, properties, body):
+                """Responsible for getting properties type and
+                   json data from producer and execute it in current consumer. 
+
+                Args:
+                    ch (Parameter): Not used but needed.
+                    method (Parameter): Not used but needed.
+                    properties (Parameter): for getting properties type so can execute
+                    specific task needed from producer to consumer.
+                    body (Parameter): json data from the producer.
+                """
                 try:
                     print("message receiving....")
                     if properties.type == 'task_category_saved':
