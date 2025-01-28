@@ -1,5 +1,5 @@
 """
-    Sending data to sentiment analysis flask app using RabbitMq.
+    Sending data to sentiment analysis flask app using RabbitMQ.
 """
 
 import os
