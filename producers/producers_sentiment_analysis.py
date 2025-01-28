@@ -2,7 +2,6 @@
     Sending data to sentiment analysis flask app using RabbitMq.
 """
 
-
 import os
 import ssl
 import json
@@ -11,7 +10,7 @@ import pika
 from pika.exceptions import ConnectionClosedByBroker, AMQPConnectionError
 
 class RabbitMQConnection:
-    """Sending event-driven data to sentiment analysis flask app"""
+    """Sending event-driven data to sentiment analysis flask app."""
     def __init__(self):
         """Required parameters"""
         self.rabbitmq_url = os.environ.get('RABBITMQ_URL')
@@ -33,7 +32,7 @@ class RabbitMQConnection:
 
         Args:
             method (string): Send custom string for identifying data by consumer.
-            body (_type_): Sending json type body data to consumer.
+            body (json): Sending json type body data to consumer.
         """
         channel = self.connect()
         properies = pika.BasicProperties(type=method)
@@ -45,13 +44,13 @@ class RabbitMQConnection:
                 body= json.dumps(body),
                 properties=properies
             )
-            print("Message published successfully")
+            print("Message published successfully.")
 
         except (ConnectionClosedByBroker, AMQPConnectionError, ssl.SSLEOFError) as err:
             logging.error('Could not publish message to RabbitMQ: %s', err)
-            # Reconnect to RabbitMQ
+            # Reconnect to RabbitMQ.
             channel = self.connect()
         except pika.exceptions.AMQPError as err:
-            # Handle errors in publishing messages
-            print(f"Failed to publish message: {err}")
+            # Handle errors in publishing messages.
+            print(f"Failed to publish message: {err}.")
     
