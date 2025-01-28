@@ -1,3 +1,8 @@
+"""
+  Added models from Images app inside admin so can register inside control panel(can view data from
+  django admin panel).
+"""
+
 from django.contrib import admin
 from .models import Images
 
@@ -5,6 +10,11 @@ from .models import Images
 
 @admin.register(Images)
 class ImagesModelAdmin(admin.ModelAdmin):
+    """Register Images admin model.
+
+    Args:
+        admin (class ModelAdmin): For registering in the admin panel.
+    """
     list_display = [
       'id','image_name','image_data'
     ]
