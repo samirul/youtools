@@ -19,7 +19,7 @@ class RabbitMQConnection:
         """For Connecting to RabbitMQ server and channel.
 
         Returns:
-            return: channel for make connections.
+            return: Connection channel after connecting to the rabbitMQ server.
         """
         params = pika.URLParameters(self.rabbitmq_url)
         connection = pika.BlockingConnection(params)
