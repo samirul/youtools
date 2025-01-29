@@ -1,5 +1,5 @@
 """
-    Serializer for views.
+    Serializer for api_gateway_microservices views.
 """
 from rest_framework import serializers
 
