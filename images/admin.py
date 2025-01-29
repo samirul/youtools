@@ -10,7 +10,7 @@ from .models import Images
 
 @admin.register(Images)
 class ImagesModelAdmin(admin.ModelAdmin):
-    """Register Images admin model.
+    """Register Images model.
 
     Args:
         admin (class ModelAdmin): For registering in the admin panel.
