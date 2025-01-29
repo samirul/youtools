@@ -1,6 +1,6 @@
-'''
+"""
     Added google social login and access token and refresh token login urls.
-'''
+"""
 
 from django.urls import path, include
 from rest_framework_simplejwt.views import (

@@ -1,3 +1,7 @@
+"""
+    Added required databases.
+"""
+
 from pathlib import Path
 from decouple import config
 

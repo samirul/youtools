@@ -1,6 +1,6 @@
 """
-  Added models from others app inside admin so can register inside control pannel(can view data from
-  django admin pannel.)
+  Added models from others app inside admin so can register inside control panel(can view data from
+  django admin panel).
 """
 from django.contrib import admin
 from .models import (TopBanner, LinksFooterCategory, SocialLinksFooterCategory,
@@ -10,7 +10,7 @@ from .models import (TopBanner, LinksFooterCategory, SocialLinksFooterCategory,
 # Register your models here.
 @admin.register(TopBanner)
 class TopBannerModelAdmin(admin.ModelAdmin):
-    """ Register top banner admin model.
+    """ Register TopBanner model.
 
     Args:
         admin (class ModelAdmin): For registering in the admin panel.
@@ -21,7 +21,7 @@ class TopBannerModelAdmin(admin.ModelAdmin):
 
 @admin.register(LinksFooterCategory)
 class LinksFooterCategoryModelAdmin(admin.ModelAdmin):
-    """ Register footer links category model.
+    """ Register LinksFooterCategory model.
 
     Args:
         admin (class ModelAdmin): For registering in the admin panel.
@@ -32,7 +32,7 @@ class LinksFooterCategoryModelAdmin(admin.ModelAdmin):
 
 @admin.register(SocialLinksFooterCategory)
 class SocialLinksFooterCategoryModelAdmin(admin.ModelAdmin):
-    """ Register footer social links category model.
+    """ Register SocialLinksFooterCategory model.
 
     Args:
         admin (class ModelAdmin): For registering in the admin panel.
@@ -43,7 +43,7 @@ class SocialLinksFooterCategoryModelAdmin(admin.ModelAdmin):
 
 @admin.register(LinksFooter)
 class LinksFooterModelAdmin(admin.ModelAdmin):
-    """ Register footer links model.
+    """ Register LinksFooter model.
 
     Args:
         admin (class ModelAdmin): For registering in the admin panel.
@@ -54,7 +54,7 @@ class LinksFooterModelAdmin(admin.ModelAdmin):
 
 @admin.register(SocialLinksFooter)
 class SocialLinksFooterModelAdmin(admin.ModelAdmin):
-    """ Register footer social links model.
+    """ Register SocialLinksFooter model.
 
     Args:
         admin (class ModelAdmin): For registering in the admin panel.
@@ -65,7 +65,7 @@ class SocialLinksFooterModelAdmin(admin.ModelAdmin):
 
 @admin.register(TitleFooter)
 class TitleFooterModelAdmin(admin.ModelAdmin):
-    """ Register footer title model.
+    """ Register TitleFooter model.
 
     Args:
         admin (class ModelAdmin): For registering in the admin panel.
@@ -76,7 +76,7 @@ class TitleFooterModelAdmin(admin.ModelAdmin):
 
 @admin.register(CopyRightFooter)
 class CopyRightFooterModelAdmin(admin.ModelAdmin):
-    """ Register copyright footer model.
+    """ Register CopyRightFooter model.
 
     Args:
         admin (class ModelAdmin): For registering in the admin panel.

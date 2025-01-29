@@ -1,6 +1,6 @@
-'''
-    Made customer user models for user 
-'''
+"""
+    Made customer user models for user.
+"""
 
 import uuid
 import requests
@@ -15,8 +15,26 @@ from producers.producers_sentiment_analysis import RabbitMQConnection
 publish_sentiment_analysis = RabbitMQConnection()
 
 class UserManager(BaseUserManager):
-    def create_user(self, username, email, password=None):
+    """UserManager helps to create users with proper validation.
 
+    Args:
+        BaseUserManager (Class): Responsible for managing user-related
+        models, such as creating user, superusers, custom user objects.
+    """
+    def create_user(self, username, email, password=None):
+        """Create user data.
+
+        Args:
+            username (Parameter): Will take username.
+            email (Parameter): Will take email.
+            password (Parameter, optional): Will take password. Defaults to None.
+
+        Raises:
+            ValueError: Validation email error.
+
+        Returns:
+            Variable: User.
+        """
         if not email:
             raise ValueError('User must have an email address')
         
@@ -31,7 +49,16 @@ class UserManager(BaseUserManager):
         
 
     def create_superuser(self, username, email, password):
+        """Create Super user data.
 
+        Args:
+            username (Parameter): Will take username.
+            email (Parameter): Will take email.
+            password (Parameter): Will take password.
+
+        Returns:
+            Variable: User.
+        """
         user = self.create_user(
             username=username,
             email=email,
@@ -45,9 +72,16 @@ class UserManager(BaseUserManager):
         return user
     
 
-
-
 class User(AbstractBaseUser):
+    """Creating custom user model.
+
+    Args:
+        AbstractBaseUser (Class): Creating custom user model and adding more
+        attribute to the model.
+
+    Returns:
+        String: User email.
+    """
     email = models.EmailField(
         verbose_name='Email',
         max_length=255,
@@ -67,6 +101,14 @@ class User(AbstractBaseUser):
     REQUIRED_FIELDS = []
 
     def get_all_permissions(self, user=None):
+        """Check for all the permissions in the model.
+
+        Args:
+            user (parameter, optional): user information. Defaults to None.
+
+        Returns:
+            Returns: If user is admin then return set() or all permissions.
+        """
         if user.is_admin:
             return set()
 
@@ -74,22 +116,48 @@ class User(AbstractBaseUser):
         return str(self.email)
 
     def has_perm(self, perm, obj=None):
+        """Give all permissions to admin only.
+
+        Args:
+            perm (Parameter): Get permissions.
+            obj (Object, optional): Object. Defaults to None.
+
+        Returns:
+            Return: All permissions to the is_admin only.
+        """
         return self.is_admin
 
     def has_module_perms(self, app_label):
+        """It determines whether a user has permissions to view or interact with a specific app.
+
+        Args:
+            app_label (String): It determines permissions in the app label(default: Django app names).
+
+        Returns:
+            Boolean: Returns True for allowing permission to users.
+        """
         return True
 
     @property
     def is_staff(self):
+        """Determines who can login to Django admin panel.
+
+        Returns:
+            Returns: Here only admin can login to control panel.
+        """
         return self.is_admin
     
 
-@receiver(user_logged_in, sender=User) 
+@receiver(user_logged_in, sender=User)
 def save_google_profile_image(sender, request, user, **kwargs):
-    '''
-        Added signal for saving user profile picture automatically 
-        If user login using google login only else will stay as default.png
-    '''
+    """Added signal for saving user profile picture automatically 
+       If user login using google login only else will stay as default.png.
+
+    Args:
+        sender (Parameters): User model.
+        request (Parameters): Django request.
+        user (Parameters): user model object.
+    """
     social_account = user.socialaccount_set.filter(provider='google').first()
     pic = User.objects.get(email=user)
     if social_account:
@@ -107,6 +175,14 @@ def save_google_profile_image(sender, request, user, **kwargs):
 
 @receiver(user_signed_up, sender=User)
 def publish_user_info(sender, request, user, **kwargs):
+    """Publish user information after user created to rabbitMq
+       for sending data on flask apps.
+
+    Args:
+        sender (Parameter): User model.
+        request (Parameter): Django request.
+        user (Parameter): user model object.
+    """
     registered_user = User.objects.get(email=user)
     user_send_dict = {
         "id": str(registered_user.id),

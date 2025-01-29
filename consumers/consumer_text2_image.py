@@ -1,3 +1,9 @@
+"""
+    This RabbitMQ Consumer is a subscriber from the publisher
+    text2image flask app. Data will come from the text2image
+    flask app through the RabbitMQ Queue(FIFO) and will interact with django.  
+"""
+
 import sys
 import json
 import os
@@ -12,22 +18,34 @@ sys.path.append(project_root)
 # Set up Django environment
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "youtools.settings")
 django.setup()
+# Importing django models after django setup so we
+# can access django models properly outside django projects. 
 from images.models import Images
 from accounts.models import User
 from converter.binary_to_png import upload_image_from_byte_image_array
 
-# RabbitMQ connection parameters
+# RabbitMQ connection parameters.
 params = pika.URLParameters(os.environ.get('RABBITMQ_URL'))
 
 
 def connect_consumer():
-    # Establish connection
+    """For connecting and waiting to get messages from the producer."""
     try:
         connection = pika.BlockingConnection(params)
         channel = connection.channel()
         channel.queue_declare(queue='youtools-queue_text2image')
 
         def callback(ch, method, properties, body):
+            """Responsible for getting properties type and
+                json data from producer and execute it in current consumer. 
+
+            Args:
+                ch (Parameter): Not used but needed.
+                method (Parameter): Not used but needed.
+                properties (Parameter): for getting properties type so can execute
+                specific task needed from producer to consumer.
+                body (Parameter): json data from the producer.
+            """
             try:
                 print("message receiving....")
                 if properties.type == 'created_new_image':
@@ -38,7 +56,7 @@ def connect_consumer():
                     binary_to_image=upload_image_from_byte_image_array(byte_array=converted_data['image_data'], file_name=f"result_txt_2_img_{'_'.join(spilt_name)}.png")
                     user = User.objects.get(id=converted_data['user_id'])
                     
-                    # Create the image record in the database
+                    # Create the image record in the database.
                     Images.objects.create(
                         id=converted_data['_id'],
                         image_data=binary_to_image,
@@ -48,6 +66,7 @@ def connect_consumer():
                     print("Image uploaded successfully")
 
                 if properties.type == 'image_data_Delete_from_flask':
+                    # deleting image data from the database.
                     print("Task executing, please wait....")
                     ids = body.decode('utf-8')
                     converted_id = json.loads(ids)
@@ -63,10 +82,10 @@ def connect_consumer():
                     
             
             except Exception as e:
-                # Log or handle errors during message processing
+                # Log or handle errors during message processing.
                 print(f"Error processing message: {e}")
 
-        # Start consuming messages from 'django_app' queue
+        # Start consuming messages from 'youtools-queue_text2image' queue.
         channel.basic_consume(queue='youtools-queue_text2image', on_message_callback=callback, auto_ack=True)
         print('Waiting for messages....')
         channel.start_consuming()
@@ -77,7 +96,7 @@ def connect_consumer():
         print(f"An error occurred: {e}")
 
     finally:
-        # Ensure the channel and connection are closed if they were opened
+        # Ensure the channel and connection are closed if they were opened.
         if 'channel' in locals() and channel.is_open:
             channel.close()
         if 'connection' in locals() and connection.is_open:

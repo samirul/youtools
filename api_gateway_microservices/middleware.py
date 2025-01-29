@@ -7,6 +7,7 @@ class MoveJWTRefreshCookieIntoTheBody(MiddlewareMixin):
     as required by dj_rest_auth for refresh token to get new access_token"""
 
     def __init__(self, get_response):
+        super().__init__(get_response)
         self.get_response = get_response
 
     def __call__(self, request):

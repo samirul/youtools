@@ -1,5 +1,5 @@
 """
-    Sentiment analysis django model.
+    Sentiment analysis django model for.
 """
 import time
 from django.db import models
@@ -14,13 +14,13 @@ rabbit_mq = RabbitMQConnection()
 
 class Category(models.Model):
     """Models for storing Sentiment analysis data
-       category from rabbitMq
+       category from rabbitMQ.
 
     Args:
-        models (models): django model
+        models (models): django model.
 
     Returns:
-        _type_: Will display category title in django admin pannel
+        String: Will display category title in django admin panel.
     """
     id = models.CharField(primary_key=True)
     category_name = models.CharField(max_length=255)
@@ -31,21 +31,29 @@ class Category(models.Model):
         return str(self.category_name)
     
 @receiver(post_delete, sender=Category)
-def delete_data_on_model_after_deleting_data_from_admin_pannel(sender, instance, **kwargs):
+def delete_data_on_model_after_deleting_data_from_admin_panel(sender, instance, **kwargs):
+    """Here signal is for publishing data to RabbitMQ after deleting
+       data from the django admin panel, so data can get deleted
+       from sentiment_analysis flask application.
+
+    Args:
+        sender (Parameter): Category model.
+        instance (Parameter): Contains deleted object even after getting deleted.
+    """
     time.sleep(1)
     if not Category.objects.exists():
         rabbit_mq.publish_sentiment_analysis("delete_sentiment_analysis_category_data_from_flask", instance.id)
 
 
 class SentiMentAnalysis(models.Model):
-    """Models for storing Sentiment analysis data
-       from rabbitMq 
+    """Models for storing Sentiment analysis data.
+       from rabbitMQ 
 
     Args:
-        models (models): django model
+        models (models): django model.
 
     Returns:
-        _type_: Will display video title in django admin pannel
+        String: Will display video title in django admin panel.
     """
     id = models.CharField(primary_key=True)
     video_title = models.CharField(max_length=255)
@@ -62,7 +70,15 @@ class SentiMentAnalysis(models.Model):
     
 
 @receiver(post_delete, sender=SentiMentAnalysis)
-def delete_category_data_on_model_after_deleting_data_from_admin_pannel(sender, instance, **kwargs):
+def delete_category_data_on_model_after_deleting_data_from_admin_panel(sender, instance, **kwargs):
+    """Here signal is for publishing data to RabbitMQ after deleting
+       data from the django admin panel, so data can get deleted
+       from sentiment_analysis flask application.
+
+    Args:
+        sender (Parameter): SentiMentAnalysis model.
+        instance (Parameter): Contains deleted object even after getting deleted.
+    """
     time.sleep(1)
     if not SentiMentAnalysis.objects.exists():
         rabbit_mq.publish_sentiment_analysis("delete_sentiment_analysis_data_from_flask", instance.id)
