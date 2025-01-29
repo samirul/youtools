@@ -1,6 +1,6 @@
-'''
+"""
     Added dj_rest_auth registration, login, password-reset, password-change urls
-'''
+"""
 
 from django.contrib import admin
 from django.urls import path, include
