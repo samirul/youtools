@@ -11,7 +11,7 @@ from accounts.models import User
 
 @admin.register(User)
 class UserModelAdmin(admin.ModelAdmin):
-    """Register User admin model.
+    """Register User model.
 
     Args:
         admin (class ModelAdmin): For registering in the admin panel.
