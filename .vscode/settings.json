@@ -3,6 +3,7 @@
         "allauth",
         "dotenv",
         "socialaccount",
-        "sociallogin"
+        "sociallogin",
+        "youtools"
     ]
 }

@@ -1,9 +1,6 @@
 import json
 import pytest
-import redis
 from django.core import mail
-
-red = redis.Redis(decode_responses=True)
 
 @pytest.mark.django_db()
 def test_register(client):
@@ -52,8 +49,6 @@ def test_login(client, register):
     assert 'pk' in data['user']
     assert 'email' in data['user']
     assert response.status_code == 200
-    red.set("flask_cache_test_user_key", data['access'])
-    red.set("flask_cache_test_user_info", str(data['user']))
 
 
 
