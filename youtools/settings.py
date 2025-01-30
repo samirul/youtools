@@ -2,7 +2,7 @@ import os
 from datetime import timedelta
 from pathlib import Path
 from dotenv import load_dotenv
-from data.database import DATABASES # imported database # pylint: disable=unused-import
+from data.database import DATABASES, CACHES # imported database # pylint: disable=unused-import
 
 load_dotenv()
 
@@ -288,4 +288,9 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
+# Django sessions are stored in Redis
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_CACHE_ALIAS = 'default'
+
 # EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
+

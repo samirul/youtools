@@ -18,3 +18,15 @@ DATABASES = {
         'PORT': config('DATABASE_PORT'),
     }
 }
+
+# added redis caching for other and products app.
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": config('REDIS_URL'),
+         'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}

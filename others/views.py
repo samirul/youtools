@@ -1,7 +1,8 @@
 """
     DRF Other views for send data to api from backend to frontend for banners and footers.
 """
-
+import os
+from django.core.cache import cache
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -9,6 +10,9 @@ from .serializers import (TopBannerViewSerializer, LinksFooterViewSerializer,
                           SocialLinksFooterViewSerializer, TitleFooterViewSerializer, CopyRightFooterViewSerializer)
 from .models import (TopBanner, LinksFooterCategory,
                      TitleFooter, CopyRightFooter, SocialLinksFooterCategory)
+
+
+CACHE_TIMEOUT = 60*int(os.environ.get('CACHE_TIME_LIMIT'))
 
 # Create your views here.
 class TopBannerView(APIView):
@@ -28,8 +32,14 @@ class TopBannerView(APIView):
             send Exception (404 not found).
         """
         try:
+            # check if cached item is stored or not.
+            cached_item = cache.get('django_drf_top_banner_cache')
+            if cached_item:
+                return Response(cached_item, status=status.HTTP_200_OK)
+
             top_banner = TopBanner.objects.defer('created_at','updated_at')
             serializer = TopBannerViewSerializer(instance=top_banner, many=True)
+            cache.set('django_drf_top_banner_cache', serializer.data, timeout=CACHE_TIMEOUT)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception:
             return Response(status=status.HTTP_404_NOT_FOUND)
@@ -52,8 +62,14 @@ class LinksFooterView(APIView):
             send Exception (404 not found).
         """
         try:
+            # check if cached item is stored or not.
+            cached_item = cache.get('django_drf_link_footer_cache')
+            if cached_item:
+                return Response(cached_item, status=status.HTTP_200_OK)
+            
             link = LinksFooterCategory.objects.prefetch_related('links_footer').defer('created_at','updated_at')
             serializer = LinksFooterViewSerializer(instance=link, many=True)
+            cache.set('django_drf_link_footer_cache', serializer.data, timeout=CACHE_TIMEOUT)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception:
             return Response(status=status.HTTP_404_NOT_FOUND)
@@ -75,8 +91,14 @@ class SocialLinksFooterView(APIView):
             send Exception (404 not found).
         """
         try:
+            # check if cached item is stored or not.
+            cached_item = cache.get('django_drf_social_link_footer_cache')
+            if cached_item:
+                return Response(cached_item, status=status.HTTP_200_OK)
+            
             link = SocialLinksFooterCategory.objects.prefetch_related('sociallinks_footer').defer('created_at','updated_at')
             serializer = SocialLinksFooterViewSerializer(instance=link, many=True)
+            cache.set('django_drf_social_link_footer_cache', serializer.data, timeout=CACHE_TIMEOUT)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception:
             return Response(status=status.HTTP_404_NOT_FOUND)
@@ -98,8 +120,14 @@ class TitleFooterView(APIView):
             send Exception (404 not found).
         """
         try:
+            # check if cached item is stored or not.
+            cached_item = cache.get('django_drf_title_footer_cache')
+            if cached_item:
+                return Response(cached_item, status=status.HTTP_200_OK)
+            
             link = TitleFooter.objects.defer('created_at','updated_at')
             serializer = TitleFooterViewSerializer(instance=link, many=True)
+            cache.set('django_drf_title_footer_cache', serializer.data, timeout=CACHE_TIMEOUT)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception:
             return Response(status=status.HTTP_404_NOT_FOUND)
@@ -121,8 +149,14 @@ class CopyRightFooterView(APIView):
             send Exception (404 not found).
         """
         try:
+            # check if cached item is stored or not.
+            cached_item = cache.get('django_drf_copyright_footer_cache')
+            if cached_item:
+                return Response(cached_item, status=status.HTTP_200_OK)
+            
             link = CopyRightFooter.objects.defer('created_at','updated_at')
             serializer = CopyRightFooterViewSerializer(instance=link, many=True)
+            cache.set('django_drf_copyright_footer_cache', serializer.data, timeout=CACHE_TIMEOUT)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception:
             return Response(status=status.HTTP_404_NOT_FOUND)
