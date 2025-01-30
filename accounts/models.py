@@ -98,7 +98,7 @@ class User(AbstractBaseUser):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['username']
 
     def get_all_permissions(self, user=None):
         """Check for all the permissions in the model.
