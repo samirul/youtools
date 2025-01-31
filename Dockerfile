@@ -11,11 +11,12 @@ RUN python -m venv /virtual-py && \
     apt-get update && \
     apt-get install -y postgresql-client && \
     /virtual-py/bin/pip install --no-cache-dir -r requirements.txt && \
-    adduser --disabled-password youtools-user && \
-    chown -R youtools-user:youtools-user /youtools-app && \
-    chmod -R 755 /youtools-app && \
+    adduser --disabled-password --no-create-home youtools-user && \
+    mkdir -p /vol/web/static && \
+    mkdir -p /vol/web/media && \
+    chown -R youtools-user:youtools-user /vol && \
+    chmod -R 755 /vol && \
     chmod +x scripts.sh
-
 
 USER youtools-user
 

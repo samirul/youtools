@@ -7,9 +7,8 @@ services:
         - POSTGRES_USER=${DATABASE_USER}
         - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
         - POSTGRES_DB=${DATABASE_NAME}
-      
       volumes:
-        - ./youtools-postgres-db:/data/postgres/
+        - ./youtools-postgres-db:/var/lib/postgresql/data/
       ports:
         - $DATABASE_PORT_MODIFIED:$DATABASE_PORT
       networks:
@@ -19,7 +18,7 @@ services:
         interval: 10s
         timeout: 5s
         retries: 5
-  
+
     redis-cache-youtools:
       container_name: redis-cache-youtools
       image: redis:6.2-alpine
@@ -52,20 +51,35 @@ services:
         context: .
         dockerfile: Dockerfile
       ports:
-        - $DJANGO_HOST_PASSWORD:$DJANGO_HOST_PASSWORD
+        - $DJANGO_HOST_PORT:$DJANGO_HOST_PORT
       env_file:
         - ".env"
       volumes:
         - .:/youtools-app
-        - youtools-static:/youtools-app/static/
-        - youtools-media:/youtools-app/media/
+        - youtools-static:/vol/web/static/
+        - youtools-media:/vol/web/media/
       networks:
         - youtools_app_network
-      command: bash -c "source /virtual-py/bin/activate && python manage.py collectstatic --noinput &&
-              python manage.py migrate && python3 -m pytest -s -v && python manage.py runserver 0.0.0.0:$DJANGO_HOST_PASSWORD"
+      command: bash -c "source /virtual-py/bin/activate && python manage.py runserver 0.0.0.0:$DJANGO_HOST_PORT"
+      # command: bash -c "source /virtual-py/bin/activate && python manage.py collectstatic --noinput &&
+      #         python manage.py migrate && python3 -m pytest -s -v && python manage.py runserver 0.0.0.0:$DJANGO_HOST_PORT"
       depends_on:
         postgresql-youtools:
           condition: service_healthy
+
+    youtools-testing-django_project:
+      container_name: youtools-testing-django_project
+      image: youtools-django_project
+      env_file:
+        - ".env"
+      networks:
+        - youtools_app_network
+      command: bash -c "source /virtual-py/bin/activate && python3 -m pytest -s -v"
+      depends_on:
+        postgresql-youtools:
+          condition: service_healthy
+        youtools-django_project:
+          condition: service_started
 
     gunicorn-5200-youtools:
       container_name: gunicorn-5200-youtools
@@ -76,8 +90,8 @@ services:
       env_file:
         - path: ".env"
       volumes:
-        - youtools-static:/youtools-app/static/
-        - youtools-media:/youtools-app/media/
+        - youtools-static:/vol/web/static/
+        - youtools-media:/vol/web/media/
       networks:
         - youtools_app_network
       command: bash -c "source /virtual-py/bin/activate && gunicorn youtools.wsgi:application --bind 0.0.0.0:5200"
@@ -96,8 +110,8 @@ services:
       env_file:
         - path: ".env"
       volumes:
-        - youtools-static:/youtools-app/static/
-        - youtools-media:/youtools-app/media/
+        - youtools-static:/vol/web/static/
+        - youtools-media:/vol/web/media/
       networks:
         - youtools_app_network
       command: bash -c "source /virtual-py/bin/activate && gunicorn youtools.wsgi:application --bind 0.0.0.0:5210"
@@ -116,8 +130,8 @@ services:
       env_file:
         - path: ".env"
       volumes:
-        - youtools-static:/youtools-app/static/
-        - youtools-media:/youtools-app/media/
+        - youtools-static:/vol/web/static/
+        - youtools-media:/vol/web/media/
       networks:
         - youtools_app_network
       command: bash -c "source /virtual-py/bin/activate && gunicorn youtools.wsgi:application --bind 0.0.0.0:5211"
@@ -136,8 +150,8 @@ services:
       env_file:
         - path: ".env"
       volumes:
-        - youtools-static:/youtools-app/static/
-        - youtools-media:/youtools-app/media/
+        - youtools-static:/vol/web/static/
+        - youtools-media:/vol/web/media/
       networks:
         - youtools_app_network
       command: bash -c "source /virtual-py/bin/activate && gunicorn youtools.wsgi:application --bind 0.0.0.0:5212"
@@ -153,8 +167,8 @@ services:
         context: ./nginx
       restart: always
       volumes:
-        - youtools-static:/youtools-app/static/
-        - youtools-media:/youtools-app/media/
+        - youtools-static:/vol/web/static/
+        - youtools-media:/vol/web/media/
       ports:
         - $NGINX_PORT:$NGINX_PORT
       networks:
@@ -183,7 +197,4 @@ volumes:
 networks:
   youtools_app_network:
     driver: bridge
-
-  
-  
       
