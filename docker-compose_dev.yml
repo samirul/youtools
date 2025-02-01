@@ -56,13 +56,9 @@ services:
         - ".env"
       volumes:
         - .:/youtools-app
-        - youtools-static:/vol/web/static/
-        - youtools-media:/vol/web/media/
       networks:
         - youtools_app_network
-      command: bash -c "source /virtual-py/bin/activate && python manage.py runserver 0.0.0.0:$DJANGO_HOST_PORT"
-      # command: bash -c "source /virtual-py/bin/activate && python manage.py collectstatic --noinput &&
-      #         python manage.py migrate && python3 -m pytest -s -v && python manage.py runserver 0.0.0.0:$DJANGO_HOST_PORT"
+      command: bash -c "source /virtual-py/bin/activate && python3 manage.py runserver 0.0.0.0:$DJANGO_HOST_PORT"
       depends_on:
         postgresql-youtools:
           condition: service_healthy
@@ -81,6 +77,37 @@ services:
         youtools-django_project:
           condition: service_started
 
+    youtools-migration-django_project:
+      container_name: youtools-migration-django_project
+      image: youtools-django_project
+      env_file:
+        - ".env"
+      networks:
+        - youtools_app_network
+      command: bash -c "source /virtual-py/bin/activate && python3 manage.py migrate"
+      depends_on:
+        postgresql-youtools:
+          condition: service_healthy
+        youtools-django_project:
+          condition: service_started
+
+    youtools-static-generate-django_project:
+      container_name: youtools-static-generate-django_project
+      image: youtools-django_project
+      env_file:
+        - ".env"
+      networks:
+        - youtools_app_network
+      command: bash -c "source /virtual-py/bin/activate && python3 manage.py collectstatic --noinput"
+      volumes:
+        - youtools-static:/vol/web/static/
+        - youtools-media:/vol/web/media/
+      depends_on:
+        postgresql-youtools:
+          condition: service_healthy
+        youtools-django_project:
+          condition: service_started
+
     gunicorn-5200-youtools:
       container_name: gunicorn-5200-youtools
       image: youtools-django_project
@@ -89,12 +116,12 @@ services:
         - 5200:5200
       env_file:
         - path: ".env"
-      volumes:
-        - youtools-static:/vol/web/static/
-        - youtools-media:/vol/web/media/
       networks:
         - youtools_app_network
       command: bash -c "source /virtual-py/bin/activate && gunicorn youtools.wsgi:application --bind 0.0.0.0:5200"
+      volumes:
+        - youtools-static:/vol/web/static/
+        - youtools-media:/vol/web/media/
       depends_on:
         postgresql-youtools:
           condition: service_healthy
@@ -109,12 +136,12 @@ services:
         - 5210:5210
       env_file:
         - path: ".env"
-      volumes:
-        - youtools-static:/vol/web/static/
-        - youtools-media:/vol/web/media/
       networks:
         - youtools_app_network
       command: bash -c "source /virtual-py/bin/activate && gunicorn youtools.wsgi:application --bind 0.0.0.0:5210"
+      volumes:
+        - youtools-static:/vol/web/static/
+        - youtools-media:/vol/web/media/
       depends_on:
         postgresql-youtools:
           condition: service_healthy
@@ -129,12 +156,12 @@ services:
         - 5211:5211
       env_file:
         - path: ".env"
-      volumes:
-        - youtools-static:/vol/web/static/
-        - youtools-media:/vol/web/media/
       networks:
         - youtools_app_network
       command: bash -c "source /virtual-py/bin/activate && gunicorn youtools.wsgi:application --bind 0.0.0.0:5211"
+      volumes:
+        - youtools-static:/vol/web/static/
+        - youtools-media:/vol/web/media/
       depends_on:
         postgresql-youtools:
           condition: service_healthy
@@ -149,12 +176,12 @@ services:
         - 5212:5212
       env_file:
         - path: ".env"
-      volumes:
-        - youtools-static:/vol/web/static/
-        - youtools-media:/vol/web/media/
       networks:
         - youtools_app_network
       command: bash -c "source /virtual-py/bin/activate && gunicorn youtools.wsgi:application --bind 0.0.0.0:5212"
+      volumes:
+        - youtools-static:/vol/web/static/
+        - youtools-media:/vol/web/media/
       depends_on:
         postgresql-youtools:
           condition: service_healthy
