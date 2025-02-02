@@ -4,12 +4,13 @@
 """
 
 from django.contrib import admin
+from unfold.admin import ModelAdmin
 from .models import Images
 
 # Register your models here.
 
 @admin.register(Images)
-class ImagesModelAdmin(admin.ModelAdmin):
+class ImagesModelAdmin(ModelAdmin):
     """Register Images model.
 
     Args:

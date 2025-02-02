@@ -3,13 +3,14 @@
   django admin panel).
 """
 from django.contrib import admin
+from unfold.admin import ModelAdmin
 from .models import (TopBanner, LinksFooterCategory, SocialLinksFooterCategory,
                     LinksFooter, SocialLinksFooter,
                     TitleFooter, CopyRightFooter)
 
 # Register your models here.
 @admin.register(TopBanner)
-class TopBannerModelAdmin(admin.ModelAdmin):
+class TopBannerModelAdmin(ModelAdmin):
     """ Register TopBanner model.
 
     Args:
@@ -20,7 +21,7 @@ class TopBannerModelAdmin(admin.ModelAdmin):
       ]
 
 @admin.register(LinksFooterCategory)
-class LinksFooterCategoryModelAdmin(admin.ModelAdmin):
+class LinksFooterCategoryModelAdmin(ModelAdmin):
     """ Register LinksFooterCategory model.
 
     Args:
@@ -31,7 +32,7 @@ class LinksFooterCategoryModelAdmin(admin.ModelAdmin):
     ]
 
 @admin.register(SocialLinksFooterCategory)
-class SocialLinksFooterCategoryModelAdmin(admin.ModelAdmin):
+class SocialLinksFooterCategoryModelAdmin(ModelAdmin):
     """ Register SocialLinksFooterCategory model.
 
     Args:
@@ -42,7 +43,7 @@ class SocialLinksFooterCategoryModelAdmin(admin.ModelAdmin):
     ]
 
 @admin.register(LinksFooter)
-class LinksFooterModelAdmin(admin.ModelAdmin):
+class LinksFooterModelAdmin(ModelAdmin):
     """ Register LinksFooter model.
 
     Args:
@@ -53,7 +54,7 @@ class LinksFooterModelAdmin(admin.ModelAdmin):
     ]
 
 @admin.register(SocialLinksFooter)
-class SocialLinksFooterModelAdmin(admin.ModelAdmin):
+class SocialLinksFooterModelAdmin(ModelAdmin):
     """ Register SocialLinksFooter model.
 
     Args:
@@ -64,7 +65,7 @@ class SocialLinksFooterModelAdmin(admin.ModelAdmin):
     ]
 
 @admin.register(TitleFooter)
-class TitleFooterModelAdmin(admin.ModelAdmin):
+class TitleFooterModelAdmin(ModelAdmin):
     """ Register TitleFooter model.
 
     Args:
@@ -75,7 +76,7 @@ class TitleFooterModelAdmin(admin.ModelAdmin):
     ]
 
 @admin.register(CopyRightFooter)
-class CopyRightFooterModelAdmin(admin.ModelAdmin):
+class CopyRightFooterModelAdmin(ModelAdmin):
     """ Register CopyRightFooter model.
 
     Args:

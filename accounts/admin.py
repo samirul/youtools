@@ -5,12 +5,13 @@
 """
 
 from django.contrib import admin
+from unfold.admin import ModelAdmin
 from accounts.models import User
 
 # Register your models here.
 
 @admin.register(User)
-class UserModelAdmin(admin.ModelAdmin):
+class UserModelAdmin(ModelAdmin):
     """Register User model.
 
     Args:
