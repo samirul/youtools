@@ -51,6 +51,7 @@ THIRDPARTY_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     "rest_framework.authtoken",
     "corsheaders",
+    "django_admin_logs",
 
     # Social Authentication
 
@@ -87,6 +88,10 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 AUTH_USER_MODEL = 'accounts.User'
+
+DJANGO_ADMIN_LOGS_DELETABLE = False
+DJANGO_ADMIN_LOGS_ENABLED = True
+DJANGO_ADMIN_LOGS_IGNORE_UNCHANGED = True
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
