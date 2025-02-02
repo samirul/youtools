@@ -9,7 +9,7 @@ from django.views.generic import TemplateView
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
+    path("/panel/admins/", admin.site.urls),
     path("api/auth/", include('dj_rest_auth.urls')), # login user by username and password
     path("password-reset/confirm/<uidb64>/<token>/", TemplateView.as_view(template_name="account/email/password_reset_confirm.html"), name='password_reset_confirm'),
     path('api/registration/', include('dj_rest_auth.registration.urls')),
