@@ -3,14 +3,13 @@
   django admin panel).
 """
 from django.contrib import admin
-from unfold.admin import ModelAdmin
 from .models import (TopBanner, LinksFooterCategory, SocialLinksFooterCategory,
                     LinksFooter, SocialLinksFooter,
                     TitleFooter, CopyRightFooter)
 
 # Register your models here.
 @admin.register(TopBanner)
-class TopBannerModelAdmin(ModelAdmin):
+class TopBannerModelAdmin(admin.ModelAdmin):
     """ Register TopBanner model.
 
     Args:
@@ -21,7 +20,7 @@ class TopBannerModelAdmin(ModelAdmin):
       ]
 
 @admin.register(LinksFooterCategory)
-class LinksFooterCategoryModelAdmin(ModelAdmin):
+class LinksFooterCategoryModelAdmin(admin.ModelAdmin):
     """ Register LinksFooterCategory model.
 
     Args:
@@ -32,7 +31,7 @@ class LinksFooterCategoryModelAdmin(ModelAdmin):
     ]
 
 @admin.register(SocialLinksFooterCategory)
-class SocialLinksFooterCategoryModelAdmin(ModelAdmin):
+class SocialLinksFooterCategoryModelAdmin(admin.ModelAdmin):
     """ Register SocialLinksFooterCategory model.
 
     Args:
@@ -43,7 +42,7 @@ class SocialLinksFooterCategoryModelAdmin(ModelAdmin):
     ]
 
 @admin.register(LinksFooter)
-class LinksFooterModelAdmin(ModelAdmin):
+class LinksFooterModelAdmin(admin.ModelAdmin):
     """ Register LinksFooter model.
 
     Args:
@@ -54,7 +53,7 @@ class LinksFooterModelAdmin(ModelAdmin):
     ]
 
 @admin.register(SocialLinksFooter)
-class SocialLinksFooterModelAdmin(ModelAdmin):
+class SocialLinksFooterModelAdmin(admin.ModelAdmin):
     """ Register SocialLinksFooter model.
 
     Args:
@@ -65,7 +64,7 @@ class SocialLinksFooterModelAdmin(ModelAdmin):
     ]
 
 @admin.register(TitleFooter)
-class TitleFooterModelAdmin(ModelAdmin):
+class TitleFooterModelAdmin(admin.ModelAdmin):
     """ Register TitleFooter model.
 
     Args:
@@ -76,7 +75,7 @@ class TitleFooterModelAdmin(ModelAdmin):
     ]
 
 @admin.register(CopyRightFooter)
-class CopyRightFooterModelAdmin(ModelAdmin):
+class CopyRightFooterModelAdmin(admin.ModelAdmin):
     """ Register CopyRightFooter model.
 
     Args:

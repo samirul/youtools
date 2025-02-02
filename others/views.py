@@ -160,6 +160,3 @@ class CopyRightFooterView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception:
             return Response(status=status.HTTP_404_NOT_FOUND)
-
-
-

@@ -4,12 +4,11 @@
 """
 
 from django.contrib import admin
-from unfold.admin import ModelAdmin
 from .models import ProductList
 
 # Register your models here.
 @admin.register(ProductList)
-class CategoryModelAdmin(ModelAdmin):
+class CategoryModelAdmin(admin.ModelAdmin):
     """Register ProductList model.
 
     Args:

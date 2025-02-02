@@ -4,13 +4,12 @@
 """
 
 from django.contrib import admin
-from unfold.admin import ModelAdmin
 from .models import SentiMentAnalysis, Category
 
 # Register your models here.
 
 @admin.register(SentiMentAnalysis)
-class ImagesModelAdmin(ModelAdmin):
+class ImagesModelAdmin(admin.ModelAdmin):
     """Register SentiMentAnalysis model.
 
     Args:
@@ -21,7 +20,7 @@ class ImagesModelAdmin(ModelAdmin):
     ]
 
 @admin.register(Category)
-class CategoryModelAdmin(ModelAdmin):
+class CategoryModelAdmin(admin.ModelAdmin):
     """Register Category model.
 
     Args:
