@@ -3,6 +3,7 @@
   django admin panel).
 """
 from django.contrib import admin
+from django.apps import apps
 from .models import (TopBanner, LinksFooterCategory, SocialLinksFooterCategory,
                     LinksFooter, SocialLinksFooter,
                     TitleFooter, CopyRightFooter)
@@ -84,3 +85,5 @@ class CopyRightFooterModelAdmin(admin.ModelAdmin):
     list_display = [
       'id','copyright_footer'
     ]
+
+apps.get_app_config('others').verbose_name = "Others Management"

@@ -25,6 +25,10 @@ class Images(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     objects = models.Manager()
 
+    class Meta:
+        """Added custom model name."""
+        verbose_name_plural = "Images"
+
     def __str__(self) -> str:
         return str(self.image_name)
      

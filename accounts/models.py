@@ -100,6 +100,10 @@ class User(AbstractBaseUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 
+    class Meta:
+        """Added custom model name."""
+        verbose_name_plural = "User accounts"
+
     def get_all_permissions(self, user=None):
         """Check for all the permissions in the model.
 

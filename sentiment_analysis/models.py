@@ -27,6 +27,10 @@ class Category(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     objects = models.Manager()
 
+    class Meta:
+        """Added custom model name."""
+        verbose_name_plural = "Categories"
+
     def __str__(self) -> str:
         return str(self.category_name)
     
@@ -64,6 +68,10 @@ class SentiMentAnalysis(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     objects = models.Manager()
+
+    class Meta:
+        """Added custom model name."""
+        verbose_name_plural = "Sentiment analysis"
 
     def __str__(self) -> str:
         return str(self.video_title)

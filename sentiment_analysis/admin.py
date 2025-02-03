@@ -4,6 +4,7 @@
 """
 
 from django.contrib import admin
+from django.apps import apps
 from .models import SentiMentAnalysis, Category
 
 # Register your models here.
@@ -30,3 +31,5 @@ class CategoryModelAdmin(admin.ModelAdmin):
       'id','category_name'
     ]
 
+
+apps.get_app_config('sentiment_analysis').verbose_name = "Flask Sentiment Analysis management"

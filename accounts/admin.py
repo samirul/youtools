@@ -5,6 +5,7 @@
 """
 
 from django.contrib import admin
+from django.apps import apps
 from accounts.models import User
 
 # Register your models here.
@@ -19,3 +20,7 @@ class UserModelAdmin(admin.ModelAdmin):
     list_display = [
       'id', 'username','email','is_active','is_admin'
     ]
+
+apps.get_app_config('accounts').verbose_name = "Account Management"
+apps.get_app_config('account').verbose_name = "All Auth Management"
+apps.get_app_config('images').verbose_name = "Flask Images Management"
