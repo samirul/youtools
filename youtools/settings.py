@@ -52,7 +52,7 @@ THIRDPARTY_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     "rest_framework.authtoken",
     "corsheaders",
-    "django_admin_logs",
+    # "django_admin_logs",
 
     # Social Authentication
 
@@ -295,11 +295,11 @@ SESSION_CACHE_ALIAS = 'default'
 
 
 DAISY_SETTINGS = {
-    'SITE_TITLE': 'Youtools Control panel',  # The title of the site 
-    'SITE_HEADER': 'Admin',  # Header text displayed in the admin panel
+    'SITE_TITLE': 'Youtools.Ai',  # The title of the site 
+    'SITE_HEADER': 'Youtools.Ai Admin Control Panel',  # Header text displayed in the admin panel
     'INDEX_TITLE': 'Hi, welcome to your dashboard',  # The title for the index page of dashboard
-    'SITE_LOGO': '',  # Path to the logo image displayed in the sidebar
-    'EXTRA_STYLES': [],  # List of extra stylesheets to be loaded in base.html (optional)
+    'SITE_LOGO': '/static/logo/youtools.png',  # Path to the logo image displayed in the sidebar
+    'EXTRA_STYLES': ['/static/logo/image.css'],  # List of extra stylesheets to be loaded in base.html (optional)
     'EXTRA_SCRIPTS': [],  # List of extra script URLs to be loaded in base.html (optional)
     'LOAD_FULL_STYLES': True,  # If True, loads full DaisyUI components in the admin (useful if you have custom template overrides)
     'SHOW_CHANGELIST_FILTER': False,  # If True, the filter sidebar will open by default on changelist views

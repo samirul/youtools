@@ -14,9 +14,12 @@ RUN python -m venv /virtual-py && \
     apk del .tmp-deps && \
     adduser --disabled-password --no-create-home youtools-user && \
     mkdir -p /vol/web/static && \
+    mkdir -p /vol/web/static/logo && \
     mkdir -p /vol/web/media && \
     chown -R youtools-user:youtools-user /vol && \
     chmod -R 755 /vol
+
+COPY ./logo /vol/web/static/logo
 
 ENV PATH="/scripts:/virtual-py/bin:$PATH"
 
