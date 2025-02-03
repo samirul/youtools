@@ -295,8 +295,8 @@ SESSION_CACHE_ALIAS = 'default'
 
 
 DAISY_SETTINGS = {
-    'SITE_TITLE': 'Youtools.Ai',  # The title of the site 
-    'SITE_HEADER': 'Youtools.Ai Admin Control Panel',  # Header text displayed in the admin panel
+    'SITE_TITLE': 'Youtools AI',  # The title of the site 
+    'SITE_HEADER': 'Youtools AI Admin Control Panel',  # Header text displayed in the admin panel
     'INDEX_TITLE': 'Hi, welcome to your dashboard',  # The title for the index page of dashboard
     'SITE_LOGO': '/static/logo/youtools.png',  # Path to the logo image displayed in the sidebar
     'EXTRA_STYLES': ['/static/logo/image.css'],  # List of extra stylesheets to be loaded in base.html (optional)
