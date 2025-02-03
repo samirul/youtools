@@ -302,7 +302,7 @@ DAISY_SETTINGS = {
     'EXTRA_STYLES': ['/static/logo/image.css'],  # List of extra stylesheets to be loaded in base.html (optional)
     'EXTRA_SCRIPTS': [],  # List of extra script URLs to be loaded in base.html (optional)
     'LOAD_FULL_STYLES': True,  # If True, loads full DaisyUI components in the admin (useful if you have custom template overrides)
-    'SHOW_CHANGELIST_FILTER': False,  # If True, the filter sidebar will open by default on changelist views
+    'SHOW_CHANGELIST_FILTER': True,  # If True, the filter sidebar will open by default on changelist views
     'DONT_SUPPORT_ME': True, # Hide github link in sidebar footer
     'SIDEBAR_FOOTNOTE': '', # add footnote to sidebar
     'APPS_REORDER': {
