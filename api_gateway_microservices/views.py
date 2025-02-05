@@ -35,7 +35,7 @@ class Text2ImageGenerateImage(APIView):
             serializer = GenerateImagesSerializers(data=request.data)
             if serializer.is_valid():
                 text = serializer.validated_data.get("text")
-                api_link = "http://localhost:81/generate-image/"
+                api_link = "http://host.docker.internal:81/generate-image/"
                 req = requests.post(api_link, json={"text": text}, headers={'Authorization': f"Bearer {access_token}"}, timeout=60)
                 if req.status_code == 401:
                     return Response({"msg": req.json()}, status=status.HTTP_401_UNAUTHORIZED)
@@ -68,7 +68,7 @@ class Text2ImageGetAllImages(APIView):
         """
         try:
             access_token = request.COOKIES.get('access_token')
-            api_link = "http://localhost:81/all-images/"
+            api_link = "http://host.docker.internal:81/all-images/"
             req = requests.get(api_link, headers={'Authorization': f"Bearer {access_token}"}, timeout=60)
             if req.status_code == 401:
                 return Response({"msg": req.json()}, status=status.HTTP_401_UNAUTHORIZED)
@@ -101,7 +101,7 @@ class Text2ImageGetSingleImageById(APIView):
         """
         try:
             access_token = request.COOKIES.get('access_token')
-            api_link = f"http://localhost:81/image/{ids}/"
+            api_link = f"http://host.docker.internal:81/image/{ids}/"
             req = requests.get(api_link, headers={'Authorization': f"Bearer {access_token}"}, timeout=60)
             if req.status_code == 401:
                 return Response({"msg": req.json()}, status=status.HTTP_401_UNAUTHORIZED)
@@ -134,7 +134,7 @@ class Text2ImageDeleteSingleImageById(APIView):
         """
         try:
             access_token = request.COOKIES.get('access_token')
-            api_link = f"http://localhost:81/image/delete/{ids}/"
+            api_link = f"http://host.docker.internal:81/image/delete/{ids}/"
             req = requests.delete(api_link, headers={'Authorization': f"Bearer {access_token}"}, timeout=60)
             if req.status_code == 401:
                 return Response({"msg": req.json()}, status=status.HTTP_401_UNAUTHORIZED)
@@ -168,7 +168,7 @@ class Text2ImageTaskStatusProgressByTaskId(APIView):
         """
         try:
             access_token = request.COOKIES.get('access_token')
-            api_link = f"http://localhost:81/task_status/{task_ids}/"
+            api_link = f"http://host.docker.internal:81/task_status/{task_ids}/"
             req = requests.get(api_link, headers={'Authorization': f"Bearer {access_token}"}, timeout=60)
             if req.status_code == 401:
                 return Response({"msg": req.json()}, status=status.HTTP_200_OK)
@@ -214,7 +214,7 @@ class SentimentAnalysisFetchCommentsAndAnalysis(APIView):
                     raise ValueError("No url is found.")
                 if not max_len:
                     raise ValueError("No Max length is found.")
-                api_link = "http://localhost:82/analysis-youtube-comments/"
+                api_link = "http://host.docker.internal:82/analysis-youtube-comments/"
                 req = requests.post(api_link, json={"url": url, "max_len": max_len}, headers={'Authorization': f"Bearer {access_token}"}, timeout=60)
                 if req.status_code == 401:
                     return Response({"msg": req.json()}, status=status.HTTP_401_UNAUTHORIZED)
@@ -248,7 +248,7 @@ class SentimentAnalysisFetchAllResultsBySingleCategory(APIView):
         """
         try:
             access_token = request.COOKIES.get('access_token')
-            api_link = f"http://localhost:82/all-youtube-comments-results/{ids}/"
+            api_link = f"http://host.docker.internal:82/all-youtube-comments-results/{ids}/"
             req = requests.get(api_link, headers={'Authorization': f"Bearer {access_token}"}, timeout=60)
             if req.status_code == 401:
                 return Response({"msg": req.json()}, status=status.HTTP_401_UNAUTHORIZED)
@@ -281,7 +281,7 @@ class SentimentAnalysisGetSingleResultById(APIView):
         """
         try:
             access_token = request.COOKIES.get('access_token')
-            api_link = f"http://localhost:82/get-youtube-comment-result/{ids}/"
+            api_link = f"http://host.docker.internal:82/get-youtube-comment-result/{ids}/"
             req = requests.get(api_link, headers={'Authorization': f"Bearer {access_token}"}, timeout=60)
             if req.status_code == 401:
                 return Response({"msg": req.json()}, status=status.HTTP_401_UNAUTHORIZED)
@@ -315,7 +315,7 @@ class SentimentAnalysisDeleteSingleResultById(APIView):
         """
         try:
             access_token = request.COOKIES.get('access_token')
-            api_link = f"http://localhost:82/delete-comment/{ids}/"
+            api_link = f"http://host.docker.internal:82/delete-comment/{ids}/"
             req = requests.delete(api_link, headers={'Authorization': f"Bearer {access_token}"}, timeout=60)
             if req.status_code == 401:
                 return Response({"msg": req.json()}, status=status.HTTP_401_UNAUTHORIZED)
@@ -347,7 +347,7 @@ class SentimentAnalysisAllCategories(APIView):
         """
         try:
             access_token = request.COOKIES.get('access_token')
-            api_link = f"http://localhost:82/all-categories/"
+            api_link = f"http://host.docker.internal:82/all-categories/"
             req = requests.get(api_link, headers={'Authorization': f"Bearer {access_token}"}, timeout=60)
             if req.status_code == 401:
                 return Response({"msg": req.json()}, status=status.HTTP_401_UNAUTHORIZED)
@@ -381,7 +381,7 @@ class SentimentAnalysisDeleteSingleCategoryById(APIView):
         """
         try:
             access_token = request.COOKIES.get('access_token')
-            api_link = f"http://localhost:82/delete-category/{ids}/"
+            api_link = f"http://host.docker.internal:82/delete-category/{ids}/"
             req = requests.delete(api_link, headers={'Authorization': f"Bearer {access_token}"}, timeout=60)
             if req.status_code == 401:
                 return Response({"msg": req.json()}, status=status.HTTP_401_UNAUTHORIZED)
@@ -414,7 +414,7 @@ class SentimentAnalysisTaskStatusProgress(APIView):
         """
         try:
             access_token = request.COOKIES.get('access_token')
-            api_link = f"http://localhost:82/task_status/{task_ids}/"
+            api_link = f"http://host.docker.internal:82/task_status/{task_ids}/"
             req = requests.get(api_link, headers={'Authorization': f"Bearer {access_token}"}, timeout=60)
             if req.status_code == 401:
                 return Response({"msg": req.json()}, status=status.HTTP_200_OK)
