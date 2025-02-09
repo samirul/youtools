@@ -23,6 +23,7 @@ django.setup()
 from images.models import Images
 from accounts.models import User
 from converter.binary_to_png import upload_image_from_byte_image_array
+from delete_images.delete import delete_data_from_media_container
 
 # RabbitMQ connection parameters.
 params = pika.URLParameters(os.environ.get('RABBITMQ_URL'))
@@ -42,7 +43,7 @@ def connect_consumer():
             Args:
                 ch (Parameter): Not used but needed.
                 method (Parameter): Not used but needed.
-                properties (Parameter): for getting properties type so can execute
+                properties (Parameter): for getting properties type so can execute.
                 specific task needed from producer to consumer.
                 body (Parameter): json data from the producer.
             """
@@ -71,8 +72,11 @@ def connect_consumer():
                     ids = body.decode('utf-8')
                     converted_id = json.loads(ids)
                     try:
-                        image = Images.objects.filter(id=converted_id)
+                        image = Images.objects.filter(id=converted_id).first()
                         if image:
+                            image_name = str(image.image_name).split()
+                            image_name_joined = "_".join(image_name)
+                            delete_data_from_media_container(f"/vol/web/media/images/result_txt_2_img_{image_name_joined}.png")
                             image.delete()
                             print("Image deleted successfully")
                         else:

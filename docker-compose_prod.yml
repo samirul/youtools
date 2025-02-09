@@ -79,6 +79,9 @@ services:
       networks:
         - youtools_app_network
       command: bash -c "source /virtual-py/bin/activate && cd consumers && python3 consumer_text2_image.py"
+      volumes:
+        - youtools-static:/vol/web/static/
+        - youtools-media:/vol/web/media/
 
     youtools-text2_sentiment-analysis:
       container_name: youtools-text2_sentiment-analysis
