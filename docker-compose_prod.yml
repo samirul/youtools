@@ -11,6 +11,11 @@ services:
         - ./youtools-postgres-db:/var/lib/postgresql/data/
       ports:
         - $DATABASE_PORT_MODIFIED:$DATABASE_PORT
+      deploy:
+        resources:
+          limits:
+            cpus: "2.0"
+            memory: 500M
       networks:
         - youtools_app_network
       healthcheck:
@@ -26,6 +31,11 @@ services:
       ports:
         - $CACHE_REDIS_PORT:$CACHE_REDIS_PORT
       command: redis-server --port ${CACHE_REDIS_PORT} --requirepass $CACHE_REDIS_PASSWORD --save 20 1 --loglevel warning
+      deploy:
+        resources:
+          limits:
+            cpus: "2.0"
+            memory: 500M
       networks:
         - youtools_app_network
       volumes: 
@@ -38,6 +48,11 @@ services:
         - $REDIS_INSIGHT_CUSTOM_PORT:$REDIS_INSIGHT_PORT
       environment:
         RI_SERVER_PORT: ${REDIS_INSIGHT_PORT}
+      deploy:
+        resources:
+          limits:
+            cpus: "1.0"
+            memory: 200M
       networks:
         - youtools_app_network
       restart: always
@@ -49,6 +64,11 @@ services:
       image: youtools-django_project
       env_file:
         - ".env"
+      deploy:
+        resources:
+          limits:
+            cpus: "1.0"
+            memory: 200M
       networks:
         - youtools_app_network
       command: bash -c "source /virtual-py/bin/activate && python3 manage.py migrate"
@@ -61,6 +81,11 @@ services:
       image: youtools-django_project
       env_file:
         - ".env"
+      deploy:
+        resources:
+          limits:
+            cpus: "1.0"
+            memory: 200M
       networks:
         - youtools_app_network
       command: bash -c "source /virtual-py/bin/activate && python3 manage.py collectstatic --noinput"
@@ -76,6 +101,11 @@ services:
       image: youtools-django_project
       env_file:
         - ".env"
+      deploy:
+        resources:
+          limits:
+            cpus: "1.0"
+            memory: 200M
       networks:
         - youtools_app_network
       command: bash -c "source /virtual-py/bin/activate && cd consumers && python3 consumer_text2_image.py"
@@ -83,11 +113,16 @@ services:
         - youtools-static:/vol/web/static/
         - youtools-media:/vol/web/media/
 
-    youtools-text2_sentiment-analysis:
-      container_name: youtools-text2_sentiment-analysis
+    youtools-text2_sentiment-analysis-consumer:
+      container_name: youtools-text2_sentiment-analysis-consumer
       image: youtools-django_project
       env_file:
         - ".env"
+      deploy:
+        resources:
+          limits:
+            cpus: "1.0"
+            memory: 200M
       networks:
         - youtools_app_network
       command: bash -c "source /virtual-py/bin/activate && cd consumers && python3 consumer_sentiment_analysis.py"
@@ -100,6 +135,11 @@ services:
         - 5200:5200
       env_file:
         - path: ".env"
+      deploy:
+        resources:
+          limits:
+            cpus: "1.0"
+            memory: 300M
       networks:
         - youtools_app_network
       command: bash -c "source /virtual-py/bin/activate && gunicorn youtools.wsgi:application --bind 0.0.0.0:5200"
@@ -118,6 +158,11 @@ services:
         - 5210:5210
       env_file:
         - path: ".env"
+      deploy:
+        resources:
+          limits:
+            cpus: "1.0"
+            memory: 300M
       networks:
         - youtools_app_network
       command: bash -c "source /virtual-py/bin/activate && gunicorn youtools.wsgi:application --bind 0.0.0.0:5210"
@@ -136,6 +181,11 @@ services:
         - 5211:5211
       env_file:
         - path: ".env"
+      deploy:
+        resources:
+          limits:
+            cpus: "1.0"
+            memory: 300M
       networks:
         - youtools_app_network
       command: bash -c "source /virtual-py/bin/activate && gunicorn youtools.wsgi:application --bind 0.0.0.0:5211"
@@ -154,6 +204,11 @@ services:
         - 5212:5212
       env_file:
         - path: ".env"
+      deploy:
+        resources:
+          limits:
+            cpus: "1.0"
+            memory: 300M
       networks:
         - youtools_app_network
       command: bash -c "source /virtual-py/bin/activate && gunicorn youtools.wsgi:application --bind 0.0.0.0:5212"
@@ -174,6 +229,11 @@ services:
         - youtools-media:/vol/web/media/
       ports:
         - $NGINX_PORT:$NGINX_PORT
+      deploy:
+        resources:
+          limits:
+            cpus: "1.0"
+            memory: 300M
       networks:
         - youtools_app_network
       depends_on:
