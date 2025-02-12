@@ -109,6 +109,7 @@ services:
       networks:
         - youtools_app_network
       command: bash -c "source /virtual-py/bin/activate && cd consumers && python3 consumer_text2_image.py"
+      restart: always
       volumes:
         - youtools-static:/vol/web/static/
         - youtools-media:/vol/web/media/
@@ -126,6 +127,7 @@ services:
       networks:
         - youtools_app_network
       command: bash -c "source /virtual-py/bin/activate && cd consumers && python3 consumer_sentiment_analysis.py"
+      restart: always
 
     gunicorn-5200-youtools:
       container_name: gunicorn-5200-youtools
