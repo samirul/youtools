@@ -55,4 +55,3 @@ def delete_data_on_model_after_deleting_data_from_admin_pannel(sender, instance,
     if not Images.objects.exists():
         while queue:
             queue.pop()
-            time.sleep(5)
