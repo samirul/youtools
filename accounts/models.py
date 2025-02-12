@@ -89,7 +89,7 @@ class User(AbstractBaseUser):
     )
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     username = models.CharField(max_length=100, unique = True)
-    profilePic = models.ImageField(upload_to='profile-pic', default="default.png")
+    profilePic = models.ImageField(upload_to='profile-pic', default="/profile-pic/default.png")
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)

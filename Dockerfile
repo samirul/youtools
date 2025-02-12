@@ -21,6 +21,8 @@ RUN python -m venv /virtual-py && \
 
 COPY ./logo /vol/web/static/logo
 
+COPY ./avatar /vol/web/media/profile-pic
+
 ENV PATH="/scripts:/virtual-py/bin:$PATH"
 
 USER youtools-user
