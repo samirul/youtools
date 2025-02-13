@@ -1,6 +1,8 @@
 FROM python:3.12.3-alpine
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
+EXPOSE 5672
+EXPOSE 15672
 WORKDIR /youtools-app
 COPY requirements.txt /youtools-app/
 COPY . /youtools-app/

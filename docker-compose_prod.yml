@@ -59,6 +59,47 @@ services:
       volumes:
         - youtools-redis-insight_data:/db
 
+    rabbit-enable-config-youtools:
+      image: rabbitmq:3.13.7-management
+      container_name: rabbit-enable-config-youtools
+      volumes:
+        - ./etc/rabbitmq/conf:/etc/rabbitmq/
+        - ./etc/rabbitmq/data/:/var/lib/rabbitmq/
+        - ./etc/rabbitmq/logs/:/var/log/rabbitmq/
+      environment:
+        RABBITMQ_ERLANG_COOKIE: ${RABBITMQ_ERLANG_COOKIE}
+        RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+        RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      networks:
+        - youtools_app_network
+      command: bash -c "rabbitmq-plugins enable --offline rabbitmq_mqtt rabbitmq_federation_management rabbitmq_stomp"
+    
+    rabbitmq-youtools:
+      image: rabbitmq:3.13.7-management
+      container_name: rabbitmq-youtools
+      volumes:
+        - ./etc/rabbitmq/conf:/etc/rabbitmq/
+        - ./etc/rabbitmq/data/:/var/lib/rabbitmq/
+        - ./etc/rabbitmq/logs/:/var/log/rabbitmq/
+      environment:
+        RABBITMQ_ERLANG_COOKIE: ${RABBITMQ_ERLANG_COOKIE}
+        RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+        RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      ports:
+        - $RABBITMQ_IP:$RABBITMQ_IP
+        - $RABBITMQ_HTTP:$RABBITMQ_HTTP
+      networks:
+        - youtools_app_network
+      restart: always
+      depends_on:
+        rabbit-enable-config-youtools:
+          condition: service_started
+      healthcheck:
+        test: [ "CMD", "rabbitmqctl", "status"]
+        interval: 5s
+        timeout: 20s
+        retries: 5
+
     youtools-migration-django_project:
       container_name: youtools-migration-django_project
       image: youtools-django_project
@@ -144,7 +185,7 @@ services:
             memory: 300M
       networks:
         - youtools_app_network
-      command: bash -c "source /virtual-py/bin/activate && gunicorn youtools.wsgi:application --bind 0.0.0.0:5200"
+      command: bash -c "source /virtual-py/bin/activate && gunicorn --threads 3 --timeout 120 youtools.wsgi:application --bind 0.0.0.0:5200"
       volumes:
         - youtools-static:/vol/web/static/
         - youtools-media:/vol/web/media/
@@ -167,7 +208,7 @@ services:
             memory: 300M
       networks:
         - youtools_app_network
-      command: bash -c "source /virtual-py/bin/activate && gunicorn youtools.wsgi:application --bind 0.0.0.0:5210"
+      command: bash -c "source /virtual-py/bin/activate && gunicorn --threads 3 --timeout 120 youtools.wsgi:application --bind 0.0.0.0:5210"
       volumes:
         - youtools-static:/vol/web/static/
         - youtools-media:/vol/web/media/
@@ -190,7 +231,7 @@ services:
             memory: 300M
       networks:
         - youtools_app_network
-      command: bash -c "source /virtual-py/bin/activate && gunicorn youtools.wsgi:application --bind 0.0.0.0:5211"
+      command: bash -c "source /virtual-py/bin/activate && gunicorn --threads 3 --timeout 120 youtools.wsgi:application --bind 0.0.0.0:5211"
       volumes:
         - youtools-static:/vol/web/static/
         - youtools-media:/vol/web/media/
@@ -213,7 +254,7 @@ services:
             memory: 300M
       networks:
         - youtools_app_network
-      command: bash -c "source /virtual-py/bin/activate && gunicorn youtools.wsgi:application --bind 0.0.0.0:5212"
+      command: bash -c "source /virtual-py/bin/activate && gunicorn --threads 3 --timeout 120 youtools.wsgi:application --bind 0.0.0.0:5212"
       volumes:
         - youtools-static:/vol/web/static/
         - youtools-media:/vol/web/media/
