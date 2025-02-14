@@ -94,6 +94,11 @@ services:
       depends_on:
         rabbit-enable-config-youtools:
           condition: service_started
+      deploy:
+        resources:
+          limits:
+            cpus: "1.0"
+            memory: 1024M
       healthcheck:
         test: [ "CMD", "rabbitmqctl", "status"]
         interval: 5s

@@ -38,16 +38,15 @@ class Category(models.Model):
         return str(self.category_name)
     
 @receiver(post_delete, sender=Category)
-def delete_data_on_model_after_deleting_data_from_admin_panel(sender, instance, **kwargs):
+def delete_category_data_on_model_after_deleting_data_from_admin_panel(sender, instance, **kwargs):
     """Here signal is for publishing data to RabbitMQ after deleting
-       data from the django admin panel, so data can get deleted
+       category and Sentiment analysis data from the django admin panel, so data can get deleted
        from sentiment_analysis flask application.
 
     Args:
         sender (Parameter): Category model.
         instance (Parameter): Contains deleted object even after getting deleted.
     """
-    time.sleep(1)
     if not Category.objects.exists():
         rabbit_mq.publish_sentiment_analysis("delete_sentiment_analysis_category_data_from_flask", instance.id)
 
@@ -81,7 +80,7 @@ class SentiMentAnalysis(models.Model):
     
 
 @receiver(post_delete, sender=SentiMentAnalysis)
-def delete_category_data_on_model_after_deleting_data_from_admin_panel(sender, instance, **kwargs):
+def delete_data_on_model_after_deleting_data_from_admin_panel(sender, instance, **kwargs):
     """Here signal is for publishing data to RabbitMQ after deleting
        data from the django admin panel, so data can get deleted
        from sentiment_analysis flask application.
@@ -90,7 +89,5 @@ def delete_category_data_on_model_after_deleting_data_from_admin_panel(sender, i
         sender (Parameter): SentiMentAnalysis model.
         instance (Parameter): Contains deleted object even after getting deleted.
     """
-    queue.appendleft(rabbit_mq.publish_sentiment_analysis("delete_sentiment_analysis_data_from_flask", instance.id))
     if not SentiMentAnalysis.objects.exists():
-        while queue:
-            queue.pop()
+        rabbit_mq.publish_sentiment_analysis("delete_sentiment_analysis_data_from_flask", instance.id)
