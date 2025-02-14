@@ -1,7 +1,6 @@
 """
     Sentiment analysis django model for.
 """
-import time
 from collections import deque
 from django.db import models
 from django.dispatch import receiver
