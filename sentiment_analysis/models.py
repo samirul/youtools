@@ -88,5 +88,4 @@ def delete_data_on_model_after_deleting_data_from_admin_panel(sender, instance, 
         sender (Parameter): SentiMentAnalysis model.
         instance (Parameter): Contains deleted object even after getting deleted.
     """
-    if not SentiMentAnalysis.objects.exists():
-        rabbit_mq.publish_sentiment_analysis("delete_sentiment_analysis_data_from_flask", instance.id)
+    rabbit_mq.publish_sentiment_analysis("delete_sentiment_analysis_data_from_flask", instance.id)
