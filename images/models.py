@@ -47,5 +47,4 @@ def delete_data_on_model_after_deleting_data_from_admin_pannel(sender, instance,
     image_name_joined = "_".join(image_name)
     delete_data_from_media_container(f"/vol/web/media/images/result_txt_2_img_{image_name_joined}_{instance.id}.png")
     # publish data in RabbitMQ Queue messaging after deleting from Django admin panel.
-    if not Images.objects.exists():
-        publish_text2_image("delete_images_from_database", instance.id)
+    publish_text2_image("delete_images_from_database", instance.id)
