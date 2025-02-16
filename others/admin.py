@@ -6,7 +6,7 @@ from django.contrib import admin
 from django.apps import apps
 from .models import (TopBanner, LinksFooterCategory, SocialLinksFooterCategory,
                     LinksFooter, SocialLinksFooter,
-                    TitleFooter, CopyRightFooter)
+                    TitleFooter, CopyRightFooter, AboutUs, PrivacyPolicy)
 
 # Register your models here.
 @admin.register(TopBanner)
@@ -86,4 +86,26 @@ class CopyRightFooterModelAdmin(admin.ModelAdmin):
       'id','copyright_footer'
     ]
 
+@admin.register(AboutUs)
+class AboutUsModelAdmin(admin.ModelAdmin):
+    """ Register AboutUs model.
+
+    Args:
+        admin (class ModelAdmin): For registering in the admin panel.
+    """
+    list_display = [
+      'id','title','description'
+    ]
+
+@admin.register(PrivacyPolicy)
+class PrivacyPolicyModelAdmin(admin.ModelAdmin):
+    """ Register PrivacyPolicy model.
+
+    Args:
+        admin (class ModelAdmin): For registering in the admin panel.
+    """
+    list_display = [
+      'id','title','description'
+    ]
+  
 apps.get_app_config('others').verbose_name = "Others Management"

@@ -8,15 +8,15 @@ from BaseID.models import BaseIdModel
 
 # Create your models here.
 class TopBanner(BaseIdModel):
-    """ORM model for topbanner database.
+    """ORM model for top-banner database.
 
     Args:
         BaseIdModel (Custom abstract Django model): Custom BaseID django abstract model
-        for needing some attributes to inheritate(BaseIdModel will not migrate in the database,
+        for needing some attributes to inherit(BaseIdModel will not migrate in the database,
         will be just abstract class).
 
     Returns:
-        String: Will return string text banner so can view in the admin control pannel.
+        String: Will return string text banner so can view in the admin control panel.
     """
     banner_image = models.ImageField(upload_to='media/homepage')
     banner_text = models.TextField(max_length=500)
@@ -34,11 +34,11 @@ class LinksFooterCategory(BaseIdModel):
 
     Args:
         BaseIdModel (Custom abstract Django model): Custom BaseID django abstract model
-        for needing some attributes to inheritate(BaseIdModel will not migrate in the database,
+        for needing some attributes to inherit(BaseIdModel will not migrate in the database,
         will be just abstract class).
 
     Returns:
-        String: Will return string category names so can view in the admin control pannel.
+        String: Will return string category names so can view in the admin control panel.
     """
     category_name = models.CharField(max_length=100)
     objects = models.Manager()
@@ -55,11 +55,11 @@ class SocialLinksFooterCategory(BaseIdModel):
 
     Args:
         BaseIdModel (Custom abstract Django model): Custom BaseID django abstract model
-        for needing some attributes to inheritate(BaseIdModel will not migrate in the database,
+        for needing some attributes to inherit(BaseIdModel will not migrate in the database,
         will be just abstract class).
 
     Returns:
-        String: Will return string social category names so can view in the admin control pannel.
+        String: Will return string social category names so can view in the admin control panel.
     """
     social_category_name = models.CharField(max_length=100)
     objects = models.Manager()
@@ -76,11 +76,11 @@ class LinksFooter(BaseIdModel):
 
     Args:
         BaseIdModel (Custom abstract Django model): Custom BaseID django abstract model
-        for needing some attributes to inheritate(BaseIdModel will not migrate in the database,
+        for needing some attributes to inherit(BaseIdModel will not migrate in the database,
         will be just abstract class).
 
     Returns:
-        String: Will return string links titles so can view in the admin control pannel.
+        String: Will return string links titles so can view in the admin control panel.
     """
     links_title = models.CharField(max_length=60)
     links_url = models.CharField(max_length=200)
@@ -100,11 +100,11 @@ class SocialLinksFooter(BaseIdModel):
 
     Args:
         BaseIdModel (Custom abstract Django model): Custom BaseID django abstract model
-        for needing some attributes to inheritate(BaseIdModel will not migrate in the database,
+        for needing some attributes to inherit(BaseIdModel will not migrate in the database,
         will be just abstract class).
 
     Returns:
-        String: Will return string social labels so can view in the admin control pannel.
+        String: Will return string social labels so can view in the admin control panel.
     """
     social_icon = models.CharField(max_length=40)
     social_url = models.CharField(max_length=200)
@@ -124,11 +124,11 @@ class TitleFooter(BaseIdModel):
 
     Args:
         BaseIdModel (Custom abstract Django model): Custom BaseID django abstract model
-        for needing some attributes to inheritate(BaseIdModel will not migrate in the database,
+        for needing some attributes to inherit(BaseIdModel will not migrate in the database,
         will be just abstract class).
 
     Returns:
-        String: Will return string footer titles so can view in the admin control pannel.
+        String: Will return string footer titles so can view in the admin control panel.
     """
     footer_title = models.CharField(max_length=200)
     footer_description = models.TextField(max_length=500)
@@ -142,15 +142,15 @@ class TitleFooter(BaseIdModel):
         return str(self.footer_title)
     
 class CopyRightFooter(BaseIdModel):
-    """ORM model for footer copytight name on the footer database.
+    """ORM model for footer copyright name on the footer database.
 
     Args:
         BaseIdModel (Custom abstract Django model): Custom BaseID django abstract model
-        for needing some attributes to inheritate(BaseIdModel will not migrate in the database,
+        for needing some attributes to inherit(BaseIdModel will not migrate in the database,
         will be just abstract class).
 
     Returns:
-        String: Will return string copyright footer so can view in the admin control pannel.
+        String: Will return string copyright footer so can view in the admin control panel.
     """
     copyright_footer = models.CharField(max_length=200)
     objects = models.Manager()
@@ -161,3 +161,52 @@ class CopyRightFooter(BaseIdModel):
 
     def __str__(self):
         return str(self.copyright_footer)
+    
+
+# Pages
+class AboutUs(BaseIdModel):
+    """ORM model for About us page on database.
+
+    Args:
+        BaseIdModel (Custom abstract Django model): Custom BaseID django abstract model
+        for needing some attributes to inherit(BaseIdModel will not migrate in the database,
+        will be just abstract class).
+
+    Returns:
+        String: Will return string about us title so can view in the admin control panel.
+    """
+    title = models.CharField(max_length=50)
+    description = models.TextField(max_length=5000)
+    objects = models.Manager()
+
+    class Meta:
+        """Added custom model name."""
+        verbose_name_plural = "About us"
+    
+    def __str__(self):
+        return str(self.title)
+    
+
+# Privacy Policy
+class PrivacyPolicy(BaseIdModel):
+    """ORM model for Privacy policy page on database.
+
+    Args:
+        BaseIdModel (Custom abstract Django model): Custom BaseID django abstract model
+        for needing some attributes to inherit(BaseIdModel will not migrate in the database,
+        will be just abstract class).
+
+    Returns:
+        String: Will return string privacy policy title so can view in the admin control panel.
+    """
+    title = models.CharField(max_length=50)
+    description = models.TextField(max_length=5000)
+    objects = models.Manager()
+
+    class Meta:
+        """Added custom model name."""
+        verbose_name_plural = "Privacy Policy"
+    
+    def __str__(self):
+        return str(self.title)
+    
