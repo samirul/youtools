@@ -5,7 +5,8 @@
 
 from rest_framework import serializers
 from .models import (TopBanner, LinksFooterCategory,
-                     TitleFooter, CopyRightFooter, SocialLinksFooterCategory)
+                     TitleFooter, CopyRightFooter, SocialLinksFooterCategory, AboutUs,
+                     PrivacyPolicy)
 
 
 class TopBannerViewSerializer(serializers.ModelSerializer):
@@ -97,3 +98,26 @@ class CopyRightFooterViewSerializer(serializers.ModelSerializer):
         """Required meta class for serialization."""
         model = CopyRightFooter
         fields = ['id', 'copyright_footer']
+
+class AboutUsViewsSerializer(serializers.ModelSerializer):
+    """Serializer for AboutUsViews in the views.
+
+    Args:
+        serializers (ModelSerializer): DRF model serializer class for serialization.
+    """
+    class Meta:
+        """Required meta class for serialization."""
+        model = AboutUs
+        fields = ['id', 'title', 'description']
+
+
+class PrivacyPolicyViewsSerializer(serializers.ModelSerializer):
+    """Serializer for PrivacyPolicyViews in the views.
+
+    Args:
+        serializers (ModelSerializer): DRF model serializer class for serialization.
+    """
+    class Meta:
+        """Required meta class for serialization."""
+        model = PrivacyPolicy
+        fields = ['id', 'title', 'description']

@@ -7,9 +7,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import (TopBannerViewSerializer, LinksFooterViewSerializer,
-                          SocialLinksFooterViewSerializer, TitleFooterViewSerializer, CopyRightFooterViewSerializer)
+                          SocialLinksFooterViewSerializer, TitleFooterViewSerializer,
+                          CopyRightFooterViewSerializer, AboutUsViewsSerializer,
+                          PrivacyPolicyViewsSerializer)
 from .models import (TopBanner, LinksFooterCategory,
-                     TitleFooter, CopyRightFooter, SocialLinksFooterCategory)
+                     TitleFooter, CopyRightFooter, SocialLinksFooterCategory,
+                     AboutUs, PrivacyPolicy)
 
 
 CACHE_TIMEOUT = 60*int(os.environ.get('CACHE_TIME_LIMIT'))
@@ -107,7 +110,7 @@ class TitleFooterView(APIView):
     """Responsible for sending data to footer title in the frontend from the backend.
 
     Args:
-         APIView (Class): Django Rest Framework(DRF) API View.
+        APIView (Class): Django Rest Framework(DRF) API View.
     """
     def get(self, request):
         """fetch footer title from the backend to the frontend (GET method).
@@ -157,6 +160,66 @@ class CopyRightFooterView(APIView):
             link = CopyRightFooter.objects.defer('created_at','updated_at')
             serializer = CopyRightFooterViewSerializer(instance=link, many=True)
             cache.set('django_drf_copyright_footer_cache', serializer.data, timeout=CACHE_TIMEOUT)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+class AboutUsView(APIView):
+    """Responsible for sending data to About us in the frontend from the backend.
+
+    Args:
+        APIView (Class): Django Rest Framework(DRF) API View.
+    """
+    def get(self, request):
+        """fetch about us from the backend to the frontend (GET method).
+
+        Args:
+            request (request): Django request argument.
+
+        Returns:
+            Response: Send Response as json if response ok then send (200 OK) else
+            send Exception (404 not found).
+        """
+        try:
+            # check if cached item is stored or not.
+            cached_item = cache.get('django_drf_about-us_page_cache')
+            if cached_item:
+                return Response(cached_item, status=status.HTTP_200_OK)
+            
+            about_us = AboutUs.objects.defer('created_at', 'updated_at')
+            serializer = AboutUsViewsSerializer(instance=about_us, many=True)
+            cache.set('django_drf_about-us_page_cache', serializer.data, timeout=CACHE_TIMEOUT)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+class PrivacyPolicyView(APIView):
+    """Responsible for sending data to privacy policy in the frontend from the backend.
+
+    Args:
+        APIView (Class): Django Rest Framework(DRF) API View.
+    """
+    def get(self, request):
+        """fetch privacy policy from the backend to the frontend (GET method).
+
+        Args:
+            request (request): Django request argument.
+
+        Returns:
+            Response: Send Response as json if response ok then send (200 OK) else
+            send Exception (404 not found).
+        """
+        try:
+            # check if cached item is stored or not.
+            cached_item = cache.get('django_drf_privacy-policy_page_cache')
+            if cached_item:
+                return Response(cached_item, status=status.HTTP_200_OK)
+            
+            privacy_policy = PrivacyPolicy.objects.defer('created_at', 'updated_at')
+            serializer = PrivacyPolicyViewsSerializer(instance=privacy_policy, many=True)
+            cache.set('django_drf_privacy-policy_page_cache', serializer.data, timeout=CACHE_TIMEOUT)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception:
             return Response(status=status.HTTP_404_NOT_FOUND)
