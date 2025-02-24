@@ -21,7 +21,7 @@ class GoogleLoginViews(SocialLoginView):
         After that will have access token and refresh token.
     """
     adapter_class = GoogleOAuth2Adapter
-    callback_url = "http://localhost:5173"
+    callback_url = "http://localhost:8080"
     client_class = OAuth2Client
 
 class GetUser(APIView):

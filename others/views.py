@@ -6,11 +6,11 @@ from django.core.cache import cache
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import (TopBannerViewSerializer, LinksFooterViewSerializer,
+from .serializers import (TopBannerViewSerializer, BottomBannerViewSerializer, LinksFooterViewSerializer,
                           SocialLinksFooterViewSerializer, TitleFooterViewSerializer,
                           CopyRightFooterViewSerializer, AboutUsViewsSerializer,
                           PrivacyPolicyViewsSerializer)
-from .models import (TopBanner, LinksFooterCategory,
+from .models import (TopBanner, BottomBanner, LinksFooterCategory,
                      TitleFooter, CopyRightFooter, SocialLinksFooterCategory,
                      AboutUs, PrivacyPolicy)
 
@@ -43,6 +43,36 @@ class TopBannerView(APIView):
             top_banner = TopBanner.objects.defer('created_at','updated_at')
             serializer = TopBannerViewSerializer(instance=top_banner, many=True)
             cache.set('django_drf_top_banner_cache', serializer.data, timeout=CACHE_TIMEOUT)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+
+class BottomBannerView(APIView):
+    """Responsible for sending data to the bottom banner in the frontend.
+
+    Args:
+        APIView (Class): Django Rest Framework(DRF) API View.
+    """
+    def get(self, request):
+        """fetch bottom banner description and images for frontend from the backend (GET method).
+
+        Args:
+            request (request): Django request argument.
+
+        Returns:
+            Response: Send Response as json if response ok then send (200 OK) else
+            send Exception (404 not found).
+        """
+        try:
+            # check if cached item is stored or not.
+            cached_item = cache.get('django_drf_bottom_banner_cache')
+            if cached_item:
+                return Response(cached_item, status=status.HTTP_200_OK)
+
+            bottom_banner = BottomBanner.objects.defer('created_at','updated_at')
+            serializer = BottomBannerViewSerializer(instance=bottom_banner, many=True)
+            cache.set('django_drf_bottom_banner_cache', serializer.data, timeout=CACHE_TIMEOUT)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception:
             return Response(status=status.HTTP_404_NOT_FOUND)

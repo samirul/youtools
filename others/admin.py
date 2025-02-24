@@ -4,7 +4,7 @@
 """
 from django.contrib import admin
 from django.apps import apps
-from .models import (TopBanner, LinksFooterCategory, SocialLinksFooterCategory,
+from .models import (TopBanner, BottomBanner, LinksFooterCategory, SocialLinksFooterCategory,
                     LinksFooter, SocialLinksFooter,
                     TitleFooter, CopyRightFooter, AboutUs, PrivacyPolicy)
 
@@ -32,6 +32,31 @@ class TopBannerModelAdmin(admin.ModelAdmin):
       if TopBanner.objects.count() >= 1:
           return False
       return True
+    
+@admin.register(BottomBanner)
+class BottomBannerModelAdmin(admin.ModelAdmin):
+    """ Register BottomBanner model.
+
+    Args:
+        admin (class ModelAdmin): For registering in the admin panel.
+    """
+    list_display = [
+        'id','banner_text'
+      ]
+    
+    def has_add_permission(self, request):
+      """Allow to post if there is no data inside specific table
+      can only add rows once.
+
+      Args:
+          request (object): Django request.
+      Returns:
+          Boolean: If rows on table more than once then will return false else will return true.
+      """
+      if BottomBanner.objects.count() >= 1:
+          return False
+      return True
+
 
 @admin.register(LinksFooterCategory)
 class LinksFooterCategoryModelAdmin(admin.ModelAdmin):

@@ -36,6 +36,13 @@ def create_top_banner():
                            banner_text="this is test top banner")
     return top_banner
 
+
+@pytest.fixture
+def create_bottom_banner():
+    bottom_banner = BottomBanner.objects.create(banner_image="test_image2.png",
+                           banner_text="this is test bottom banner")
+    return bottom_banner
+
 @pytest.fixture
 def create_link_footer_category():
     links_footer_category = LinksFooterCategory.objects.create(category_name="test_link_footer_category")

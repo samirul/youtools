@@ -29,6 +29,28 @@ class TopBanner(BaseIdModel):
     def __str__(self):
         return str(self.banner_text)
     
+class BottomBanner(BaseIdModel):
+    """ORM model for bottom-banner database.
+
+    Args:
+        BaseIdModel (Custom abstract Django model): Custom BaseID django abstract model
+        for needing some attributes to inherit(BaseIdModel will not migrate in the database,
+        will be just abstract class).
+
+    Returns:
+        String: Will return string text banner so can view in the admin control panel.
+    """
+    banner_image = models.ImageField(upload_to='media/homepage')
+    banner_text = models.TextField(max_length=500)
+    objects = models.Manager()
+
+    class Meta:
+        """Added custom model name."""
+        verbose_name_plural = "Bottom banner"
+
+    def __str__(self):
+        return str(self.banner_text)
+    
 class LinksFooterCategory(BaseIdModel):
     """ORM model for Links category on the footer database.
 
