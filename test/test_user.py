@@ -45,48 +45,45 @@ def test_register(client, settings):
     assert verify_response.url == "/accounts/profile/"
 
 
-# @pytest.mark.django_db()
-# @pytest.mark.parametrize(
-#     "register", 
-#     [{"email": "cat1@cat.com", "password": "cat2&koop123", "confirm_password": "cat2&koop123"}], 
-#     indirect=True
-# )
-# def test_login(client, register):
-#     response = client.post("/api/auth/login/",{
-#         "email": "cat1@cat.com",
-#         "password": "cat2&koop123",
-#     })
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.parametrize(
+    "register", 
+    [{"email": "cat1@cat.com", "password": "cat2&koop123", "confirm_password": "cat2&koop123"}], 
+    indirect=True
+)
+def test_login(client, register):
+    response = client.post("/api/auth/login/",{
+        "email": "cat1@cat.com",
+        "password": "cat2&koop123",
+    })
 
-#     content = response.content.decode('utf-8')
-#     data = json.loads(content)
-#     assert 'access' in data
-#     assert 'refresh' in data
-#     assert 'user' in data
-#     assert 'pk' in data['user']
-#     assert 'email' in data['user']
-#     assert response.status_code == 200
-
-
+    content = response.content.decode('utf-8')
+    data = json.loads(content)
+    assert 'access' in data
+    assert 'refresh' in data
+    assert 'user' in data
+    assert 'pk' in data['user']
+    assert 'email' in data['user']
+    assert response.status_code == 200
 
 
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.parametrize(
+    "register", 
+    [{"email": "cat2@cat.com", "password": "cat4&koop123", "confirm_password": "cat4&koop123"}], 
+    indirect=True
+)
+def test_login_failed_wrong_password(client, register):
+    response = client.post("/api/auth/login/",{
+        "email": "cat2@cat.com",
+        "password": "cat3&koop123",
+    })
 
-# @pytest.mark.django_db()
-# @pytest.mark.parametrize(
-#     "register", 
-#     [{"email": "cat2@cat.com", "password": "cat4&koop123", "confirm_password": "cat4&koop123"}], 
-#     indirect=True
-# )
-# def test_login_failed_wrong_password(client, register):
-#     response = client.post("/api/auth/login/",{
-#         "email": "cat2@cat.com",
-#         "password": "cat3&koop123",
-#     })
-
-#     content = response.content.decode('utf-8')
-#     data = json.loads(content)
-#     assert not 'access' in data
-#     assert not 'refresh' in data
-#     assert not 'user' in data
-#     assert 'non_field_errors' in data
-#     assert ['Unable to log in with provided credentials.'] == data['non_field_errors']
-#     assert response.status_code == 400
+    content = response.content.decode('utf-8')
+    data = json.loads(content)
+    assert not 'access_token' in data
+    assert not 'refresh' in data
+    assert not 'user' in data
+    assert 'non_field_errors' in data
+    assert ['Unable to log in with provided credentials.'] == data['non_field_errors']
+    assert response.status_code == 400

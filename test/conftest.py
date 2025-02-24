@@ -3,11 +3,11 @@ import pytest
 from django.core import mail
 from django.test import Client
 from others.models import *
+from products.models import *
 
 @pytest.fixture
 def client():
     return Client()
-
 
 @pytest.fixture
 def register(client, request):
@@ -29,6 +29,35 @@ def register(client, request):
     path_components = [component for component in path_components if component]
     verify_response = client.post(f"http://0.0.0.0:8000/accounts/accounts/confirm-email/{path_components[5]}/")
     return verify_response
+
+@pytest.fixture
+def user_register(client, settings):
+    response = client.post("/api/registration/", {
+        "email": "cat@cat.com",
+        "password1": "cat&koop123",
+        "password2": "cat&koop123"
+    })
+    content = response.content.decode('utf-8')
+    data = json.loads(content)
+    email = mail.outbox[0]
+    verification_link = next(
+        line for line in email.body.splitlines() if "http" in line
+    )
+    data = verification_link.split()
+    path_components = data[4].split('/')
+    path_components = [component for component in path_components if component]
+    verify_response = client.post(f"http://0.0.0.0:8000/accounts/accounts/confirm-email/{path_components[5]}/")
+
+@pytest.fixture
+def login(client, user_register):
+    response = client.post("/api/auth/login/",{
+        "email": "cat@cat.com",
+        "password": "cat&koop123",
+    })
+
+    content = response.content.decode('utf-8')
+    data = json.loads(content)
+    return data
 
 @pytest.fixture
 def create_top_banner():
@@ -102,3 +131,13 @@ def create_privacy_policy_page():
         description="test_privacy_policy_description"
     )
     return privacy_policy
+
+@pytest.fixture
+def create_product_banner():
+    products = ProductList.objects.create(
+        product_image = "products/images/test_cat_image.png",
+        product_name = "test_cat_product_name",
+        product_description = "test_cat_product_description",
+        product_url = "test_cat_url"
+    )
+    return products
