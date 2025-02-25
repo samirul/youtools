@@ -107,7 +107,7 @@ services:
 
     youtools-migration-django_project:
       container_name: youtools-migration-django_project
-      image: youtools-django_project
+      image: samirul08/youtools-django_project
       env_file:
         - ".env"
       deploy:
@@ -124,7 +124,7 @@ services:
 
     youtools-static-generate-django_project:
       container_name: youtools-static-generate-django_project
-      image: youtools-django_project
+      image: samirul08/youtools-django_project
       env_file:
         - ".env"
       deploy:
@@ -144,7 +144,7 @@ services:
 
     youtools-text2_image-consumer:
       container_name: youtools-text2_image-consumer
-      image: youtools-django_project
+      image: samirul08/youtools-django_project
       env_file:
         - ".env"
       deploy:
@@ -162,7 +162,7 @@ services:
 
     youtools-text2_sentiment-analysis-consumer:
       container_name: youtools-text2_sentiment-analysis-consumer
-      image: youtools-django_project
+      image: samirul08/youtools-django_project
       env_file:
         - ".env"
       deploy:
@@ -177,7 +177,7 @@ services:
 
     gunicorn-5200-youtools:
       container_name: gunicorn-5200-youtools
-      image: youtools-django_project
+      image: samirul08/youtools-django_project
       restart: always
       ports:
         - 5200:5200
@@ -200,7 +200,7 @@ services:
 
     gunicorn-5210-youtools:
       container_name: gunicorn-5210-youtools
-      image: youtools-django_project
+      image: samirul08/youtools-django_project
       restart: always
       ports:
         - 5210:5210
@@ -223,7 +223,7 @@ services:
 
     gunicorn-5211-youtools:
       container_name: gunicorn-5211-youtools
-      image: youtools-django_project
+      image: samirul08/youtools-django_project
       restart: always
       ports:
         - 5211:5211
@@ -246,7 +246,7 @@ services:
 
     gunicorn-5212-youtools:
       container_name: gunicorn-5212-youtools
-      image: youtools-django_project
+      image: samirul08/youtools-django_project
       restart: always
       ports:
         - 5212:5212
@@ -269,8 +269,7 @@ services:
           
     nginx-youtools:
       container_name: nginx-youtools
-      build:
-        context: ./nginx
+      image: samirul08/youtools-nginx-youtools
       restart: always
       volumes:
         - youtools-static:/vol/web/static/

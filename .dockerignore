@@ -1,2 +1,6 @@
 youtools-postgres-db
 etc
+.env
+.git
+test2.py
+.pytest_cache
