@@ -2,7 +2,7 @@ import os
 from datetime import timedelta
 from pathlib import Path
 from dotenv import load_dotenv
-from data.database import DATABASES # imported database # pylint: disable=unused-import
+from data.database import DATABASES, CACHES # imported database # pylint: disable=unused-import
 
 load_dotenv()
 
@@ -26,6 +26,7 @@ ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 # Application definition
 
 INSTALLED_APPS = [
+    'django_daisy',
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -51,6 +52,7 @@ THIRDPARTY_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     "rest_framework.authtoken",
     "corsheaders",
+    # "django_admin_logs",
 
     # Social Authentication
 
@@ -88,6 +90,11 @@ SOCIALACCOUNT_PROVIDERS = {
 
 AUTH_USER_MODEL = 'accounts.User'
 
+DJANGO_ADMIN_LOGS_DELETABLE = False
+DJANGO_ADMIN_LOGS_ENABLED = True
+DJANGO_ADMIN_LOGS_IGNORE_UNCHANGED = True
+
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -103,10 +110,9 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
-    "http://127.0.0.1:80",
-    "http://127.0.0.1:8000",
     "http://localhost:80",
     "http://localhost:8000",
+    "http://localhost:8080",
 ]
 
 CORS_ALLOW_METHODS = (
@@ -162,14 +168,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "youtools.wsgi.application"
 
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [("localhost", 6379)],
-        },
-    },
-}
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -209,8 +207,8 @@ REST_USE_JWT = True #  For Using Json Web Token
 STATIC_URL = "/static/"
 MEDIA_URL = '/media/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+STATIC_ROOT = "/vol/web/static"
+MEDIA_ROOT = "/vol/web/media"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -281,11 +279,41 @@ ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 
-LOGIN_URL = 'http://localhost:5173/login'
+LOGIN_URL = 'http://localhost:8080/login'
 
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
+# Django sessions are stored in Redis
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_CACHE_ALIAS = 'default'
+
 # EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
+
+
+DAISY_SETTINGS = {
+    'SITE_TITLE': 'Youtools AI',  # The title of the site 
+    'SITE_HEADER': 'Youtools AI Admin Control Panel',  # Header text displayed in the admin panel
+    'INDEX_TITLE': 'Hi, welcome to your dashboard',  # The title for the index page of dashboard
+    'SITE_LOGO': '/static/logo/youtools.png',  # Path to the logo image displayed in the sidebar
+    'EXTRA_STYLES': ['/static/logo/image.css'],  # List of extra stylesheets to be loaded in base.html (optional)
+    'EXTRA_SCRIPTS': [],  # List of extra script URLs to be loaded in base.html (optional)
+    'LOAD_FULL_STYLES': True,  # If True, loads full DaisyUI components in the admin (useful if you have custom template overrides)
+    'SHOW_CHANGELIST_FILTER': True,  # If True, the filter sidebar will open by default on changelist views
+    'DONT_SUPPORT_ME': True, # Hide github link in sidebar footer
+    'SIDEBAR_FOOTNOTE': '', # add footnote to sidebar
+    'APPS_REORDER': {
+        # Custom configurations for third-party apps that can't be modified directly in their `apps.py`
+        'auth': {
+            'icon': 'fa-solid fa-person-military-pointing',  # FontAwesome icon for the 'auth' app
+            'name': 'Authentication',  # Custom name for the 'auth' app
+            'hide': False,  # Whether to hide the 'auth' app from the sidebar (set to True to hide)
+            'divider_title': "Auth",  # Divider title for the 'auth' section
+        },
+        'social_django': {
+            'icon': 'fa-solid fa-users-gear',  # Custom FontAwesome icon for the 'social_django' app
+        },
+    },
+}

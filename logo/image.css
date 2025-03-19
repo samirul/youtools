@@ -1,0 +1,12 @@
+div.inline img{
+    width: 50px !important;
+    height: 50px !important;
+    border-radius: 100%;
+    border: 1px solid black;
+    margin-left: 10px;
+}
+
+div.inline{
+    padding-left: 10px;
+    font-weight: 600;
+}

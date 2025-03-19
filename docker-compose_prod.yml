@@ -1,0 +1,309 @@
+services:
+    postgresql-youtools:
+      container_name: postgresql-youtools
+      image: postgres:17.2
+      restart: always
+      environment:
+        - POSTGRES_USER=${DATABASE_USER}
+        - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+        - POSTGRES_DB=${DATABASE_NAME}
+      volumes:
+        - ./youtools-postgres-db:/var/lib/postgresql/data/
+      ports:
+        - $DATABASE_PORT_MODIFIED:$DATABASE_PORT
+      deploy:
+        resources:
+          limits:
+            cpus: "2.0"
+            memory: 500M
+      networks:
+        - youtools_app_network
+      healthcheck:
+        test: ["CMD-SHELL", "sh -c 'pg_isready -U ${DATABASE_USER} -d ${DATABASE_NAME} -h ${DATABASE_HOST}  -p ${DATABASE_PORT}'"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
+
+    redis-cache-youtools:
+      container_name: redis-cache-youtools
+      image: redis:6.2-alpine
+      restart: always
+      ports:
+        - $CACHE_REDIS_PORT:$CACHE_REDIS_PORT
+      command: redis-server --port ${CACHE_REDIS_PORT} --requirepass $CACHE_REDIS_PASSWORD --save 20 1 --loglevel warning
+      deploy:
+        resources:
+          limits:
+            cpus: "2.0"
+            memory: 500M
+      networks:
+        - youtools_app_network
+      volumes: 
+        - youtools-redis-cache-data:/data
+
+    redis-insight-youtools:
+      container_name: redis-insight-youtools
+      image: redis/redisinsight:latest
+      ports:
+        - $REDIS_INSIGHT_CUSTOM_PORT:$REDIS_INSIGHT_PORT
+      environment:
+        RI_SERVER_PORT: ${REDIS_INSIGHT_PORT}
+      deploy:
+        resources:
+          limits:
+            cpus: "1.0"
+            memory: 200M
+      networks:
+        - youtools_app_network
+      restart: always
+      volumes:
+        - youtools-redis-insight_data:/db
+
+    rabbit-enable-config-youtools:
+      image: rabbitmq:3.13.7-management
+      container_name: rabbit-enable-config-youtools
+      volumes:
+        - ./etc/rabbitmq/conf:/etc/rabbitmq/
+        - ./etc/rabbitmq/data/:/var/lib/rabbitmq/
+        - ./etc/rabbitmq/logs/:/var/log/rabbitmq/
+      environment:
+        RABBITMQ_ERLANG_COOKIE: ${RABBITMQ_ERLANG_COOKIE}
+        RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+        RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      networks:
+        - youtools_app_network
+      command: bash -c "rabbitmq-plugins enable --offline rabbitmq_mqtt rabbitmq_federation_management rabbitmq_stomp"
+    
+    rabbitmq-youtools:
+      image: rabbitmq:3.13.7-management
+      container_name: rabbitmq-youtools
+      volumes:
+        - ./etc/rabbitmq/conf:/etc/rabbitmq/
+        - ./etc/rabbitmq/data/:/var/lib/rabbitmq/
+        - ./etc/rabbitmq/logs/:/var/log/rabbitmq/
+      environment:
+        RABBITMQ_ERLANG_COOKIE: ${RABBITMQ_ERLANG_COOKIE}
+        RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+        RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      ports:
+        - $RABBITMQ_IP:$RABBITMQ_IP
+        - $RABBITMQ_HTTP:$RABBITMQ_HTTP
+      networks:
+        - youtools_app_network
+      restart: always
+      depends_on:
+        rabbit-enable-config-youtools:
+          condition: service_started
+      deploy:
+        resources:
+          limits:
+            cpus: "1.0"
+            memory: 1024M
+      healthcheck:
+        test: [ "CMD", "rabbitmqctl", "status"]
+        interval: 5s
+        timeout: 20s
+        retries: 5
+
+    youtools-migration-django_project:
+      container_name: youtools-migration-django_project
+      image: samirul08/youtools-django_project
+      env_file:
+        - ".env"
+      deploy:
+        resources:
+          limits:
+            cpus: "1.0"
+            memory: 200M
+      networks:
+        - youtools_app_network
+      command: bash -c "source /virtual-py/bin/activate && python3 manage.py migrate"
+      depends_on:
+        postgresql-youtools:
+          condition: service_healthy
+
+    youtools-static-generate-django_project:
+      container_name: youtools-static-generate-django_project
+      image: samirul08/youtools-django_project
+      env_file:
+        - ".env"
+      deploy:
+        resources:
+          limits:
+            cpus: "1.0"
+            memory: 200M
+      networks:
+        - youtools_app_network
+      command: bash -c "source /virtual-py/bin/activate && python3 manage.py collectstatic --noinput"
+      volumes:
+        - youtools-static:/vol/web/static/
+        - youtools-media:/vol/web/media/
+      depends_on:
+        postgresql-youtools:
+          condition: service_healthy
+
+    youtools-text2_image-consumer:
+      container_name: youtools-text2_image-consumer
+      image: samirul08/youtools-django_project
+      env_file:
+        - ".env"
+      deploy:
+        resources:
+          limits:
+            cpus: "1.0"
+            memory: 200M
+      networks:
+        - youtools_app_network
+      command: bash -c "source /virtual-py/bin/activate && cd consumers && python3 consumer_text2_image.py"
+      restart: always
+      volumes:
+        - youtools-static:/vol/web/static/
+        - youtools-media:/vol/web/media/
+
+    youtools-text2_sentiment-analysis-consumer:
+      container_name: youtools-text2_sentiment-analysis-consumer
+      image: samirul08/youtools-django_project
+      env_file:
+        - ".env"
+      deploy:
+        resources:
+          limits:
+            cpus: "1.0"
+            memory: 200M
+      networks:
+        - youtools_app_network
+      command: bash -c "source /virtual-py/bin/activate && cd consumers && python3 consumer_sentiment_analysis.py"
+      restart: always
+
+    gunicorn-5200-youtools:
+      container_name: gunicorn-5200-youtools
+      image: samirul08/youtools-django_project
+      restart: always
+      ports:
+        - 5200:5200
+      env_file:
+        - path: ".env"
+      deploy:
+        resources:
+          limits:
+            cpus: "1.0"
+            memory: 300M
+      networks:
+        - youtools_app_network
+      command: bash -c "source /virtual-py/bin/activate && gunicorn --threads 3 --timeout 120 youtools.wsgi:application --bind 0.0.0.0:5200"
+      volumes:
+        - youtools-static:/vol/web/static/
+        - youtools-media:/vol/web/media/
+      depends_on:
+        postgresql-youtools:
+          condition: service_healthy
+
+    gunicorn-5210-youtools:
+      container_name: gunicorn-5210-youtools
+      image: samirul08/youtools-django_project
+      restart: always
+      ports:
+        - 5210:5210
+      env_file:
+        - path: ".env"
+      deploy:
+        resources:
+          limits:
+            cpus: "1.0"
+            memory: 300M
+      networks:
+        - youtools_app_network
+      command: bash -c "source /virtual-py/bin/activate && gunicorn --threads 3 --timeout 120 youtools.wsgi:application --bind 0.0.0.0:5210"
+      volumes:
+        - youtools-static:/vol/web/static/
+        - youtools-media:/vol/web/media/
+      depends_on:
+        postgresql-youtools:
+          condition: service_healthy
+
+    gunicorn-5211-youtools:
+      container_name: gunicorn-5211-youtools
+      image: samirul08/youtools-django_project
+      restart: always
+      ports:
+        - 5211:5211
+      env_file:
+        - path: ".env"
+      deploy:
+        resources:
+          limits:
+            cpus: "1.0"
+            memory: 300M
+      networks:
+        - youtools_app_network
+      command: bash -c "source /virtual-py/bin/activate && gunicorn --threads 3 --timeout 120 youtools.wsgi:application --bind 0.0.0.0:5211"
+      volumes:
+        - youtools-static:/vol/web/static/
+        - youtools-media:/vol/web/media/
+      depends_on:
+        postgresql-youtools:
+          condition: service_healthy
+
+    gunicorn-5212-youtools:
+      container_name: gunicorn-5212-youtools
+      image: samirul08/youtools-django_project
+      restart: always
+      ports:
+        - 5212:5212
+      env_file:
+        - path: ".env"
+      deploy:
+        resources:
+          limits:
+            cpus: "1.0"
+            memory: 300M
+      networks:
+        - youtools_app_network
+      command: bash -c "source /virtual-py/bin/activate && gunicorn --threads 3 --timeout 120 youtools.wsgi:application --bind 0.0.0.0:5212"
+      volumes:
+        - youtools-static:/vol/web/static/
+        - youtools-media:/vol/web/media/
+      depends_on:
+        postgresql-youtools:
+          condition: service_healthy
+          
+    nginx-youtools:
+      container_name: nginx-youtools
+      image: samirul08/youtools-nginx-youtools
+      restart: always
+      volumes:
+        - youtools-static:/vol/web/static/
+        - youtools-media:/vol/web/media/
+      ports:
+        - $NGINX_PORT:$NGINX_PORT
+      deploy:
+        resources:
+          limits:
+            cpus: "1.0"
+            memory: 300M
+      networks:
+        - youtools_app_network
+      depends_on:
+        - gunicorn-5212-youtools
+
+
+volumes:
+  youtools-postgres-db:
+    driver: local
+    name: youtools-postgres-database
+  youtools-redis-cache-data:
+    driver: local
+    name: youtools-redis-cache-database
+  youtools-static:
+    driver: local
+    name: youtools-static-volume
+  youtools-media:
+    driver: local
+    name: youtools-media-volume
+  youtools-redis-insight_data:
+    driver: local
+    name: youtools-redis-insight_data
+
+networks:
+  youtools_app_network:
+    driver: bridge

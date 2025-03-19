@@ -24,6 +24,10 @@ class ProductList(BaseIdModel):
     product_url = models.CharField(max_length=255)
     objects = models.Manager()
 
+    class Meta:
+        """Added custom model name."""
+        verbose_name_plural = "Product list"
+
     def __str__(self):
         return str(self.product_name)
 

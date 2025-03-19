@@ -1,0 +1,227 @@
+services:
+    postgresql-youtools:
+      container_name: postgresql-youtools
+      image: postgres:17.2
+      restart: always
+      environment:
+        - POSTGRES_USER=${DATABASE_USER}
+        - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+        - POSTGRES_DB=${DATABASE_NAME}
+      volumes:
+        - ./youtools-postgres-db:/var/lib/postgresql/data/
+      ports:
+        - $DATABASE_PORT_MODIFIED:$DATABASE_PORT
+      networks:
+        - youtools_app_network
+      healthcheck:
+        test: ["CMD-SHELL", "sh -c 'pg_isready -U ${DATABASE_USER} -d ${DATABASE_NAME} -h ${DATABASE_HOST}  -p ${DATABASE_PORT}'"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
+
+    redis-cache-youtools:
+      container_name: redis-cache-youtools
+      image: redis:6.2-alpine
+      restart: always
+      ports:
+        - $CACHE_REDIS_PORT:$CACHE_REDIS_PORT
+      command: redis-server --port ${CACHE_REDIS_PORT} --requirepass $CACHE_REDIS_PASSWORD --save 20 1 --loglevel warning
+      networks:
+        - youtools_app_network
+      volumes: 
+        - youtools-redis-cache-data:/data
+
+    redis-insight-youtools:
+      container_name: redis-insight-youtools
+      image: redis/redisinsight:latest
+      ports:
+        - $REDIS_INSIGHT_CUSTOM_PORT:$REDIS_INSIGHT_PORT
+      environment:
+        RI_SERVER_PORT: ${REDIS_INSIGHT_PORT}
+      networks:
+        - youtools_app_network
+      restart: always
+      volumes:
+        - youtools-redis-insight_data:/db
+
+    youtools-django_project:
+      container_name: youtools-django_project
+      image: youtools-django_project
+      build:
+        context: .
+        dockerfile: Dockerfile
+      ports:
+        - $DJANGO_HOST_PORT:$DJANGO_HOST_PORT
+      env_file:
+        - ".env"
+      volumes:
+        - .:/youtools-app
+      networks:
+        - youtools_app_network
+      command: bash -c "source /virtual-py/bin/activate && python3 manage.py runserver 0.0.0.0:$DJANGO_HOST_PORT"
+      depends_on:
+        postgresql-youtools:
+          condition: service_healthy
+
+    youtools-testing-django_project:
+      container_name: youtools-testing-django_project
+      image: youtools-django_project
+      env_file:
+        - ".env"
+      networks:
+        - youtools_app_network
+      command: bash -c "source /virtual-py/bin/activate && python3 -m pytest -s -v"
+      depends_on:
+        postgresql-youtools:
+          condition: service_healthy
+        youtools-django_project:
+          condition: service_started
+
+    youtools-migration-django_project:
+      container_name: youtools-migration-django_project
+      image: youtools-django_project
+      env_file:
+        - ".env"
+      networks:
+        - youtools_app_network
+      command: bash -c "source /virtual-py/bin/activate && python3 manage.py migrate"
+      depends_on:
+        postgresql-youtools:
+          condition: service_healthy
+        youtools-django_project:
+          condition: service_started
+
+    youtools-static-generate-django_project:
+      container_name: youtools-static-generate-django_project
+      image: youtools-django_project
+      env_file:
+        - ".env"
+      networks:
+        - youtools_app_network
+      command: bash -c "source /virtual-py/bin/activate && python3 manage.py collectstatic --noinput"
+      volumes:
+        - youtools-static:/vol/web/static/
+        - youtools-media:/vol/web/media/
+      depends_on:
+        postgresql-youtools:
+          condition: service_healthy
+        youtools-django_project:
+          condition: service_started
+
+    gunicorn-5200-youtools:
+      container_name: gunicorn-5200-youtools
+      image: youtools-django_project
+      restart: always
+      ports:
+        - 5200:5200
+      env_file:
+        - path: ".env"
+      networks:
+        - youtools_app_network
+      command: bash -c "source /virtual-py/bin/activate && gunicorn youtools.wsgi:application --bind 0.0.0.0:5200"
+      volumes:
+        - youtools-static:/vol/web/static/
+        - youtools-media:/vol/web/media/
+      depends_on:
+        postgresql-youtools:
+          condition: service_healthy
+        youtools-django_project:
+          condition: service_started
+
+    gunicorn-5210-youtools:
+      container_name: gunicorn-5210-youtools
+      image: youtools-django_project
+      restart: always
+      ports:
+        - 5210:5210
+      env_file:
+        - path: ".env"
+      networks:
+        - youtools_app_network
+      command: bash -c "source /virtual-py/bin/activate && gunicorn youtools.wsgi:application --bind 0.0.0.0:5210"
+      volumes:
+        - youtools-static:/vol/web/static/
+        - youtools-media:/vol/web/media/
+      depends_on:
+        postgresql-youtools:
+          condition: service_healthy
+        youtools-django_project:
+          condition: service_started
+
+    gunicorn-5211-youtools:
+      container_name: gunicorn-5211-youtools
+      image: youtools-django_project
+      restart: always
+      ports:
+        - 5211:5211
+      env_file:
+        - path: ".env"
+      networks:
+        - youtools_app_network
+      command: bash -c "source /virtual-py/bin/activate && gunicorn youtools.wsgi:application --bind 0.0.0.0:5211"
+      volumes:
+        - youtools-static:/vol/web/static/
+        - youtools-media:/vol/web/media/
+      depends_on:
+        postgresql-youtools:
+          condition: service_healthy
+        youtools-django_project:
+          condition: service_started
+
+    gunicorn-5212-youtools:
+      container_name: gunicorn-5212-youtools
+      image: youtools-django_project
+      restart: always
+      ports:
+        - 5212:5212
+      env_file:
+        - path: ".env"
+      networks:
+        - youtools_app_network
+      command: bash -c "source /virtual-py/bin/activate && gunicorn youtools.wsgi:application --bind 0.0.0.0:5212"
+      volumes:
+        - youtools-static:/vol/web/static/
+        - youtools-media:/vol/web/media/
+      depends_on:
+        postgresql-youtools:
+          condition: service_healthy
+        youtools-django_project:
+          condition: service_started
+
+    nginx-youtools:
+      container_name: nginx-youtools
+      build:
+        context: ./nginx
+      restart: always
+      volumes:
+        - youtools-static:/vol/web/static/
+        - youtools-media:/vol/web/media/
+      ports:
+        - $NGINX_PORT:$NGINX_PORT
+      networks:
+        - youtools_app_network
+      depends_on:
+        - gunicorn-5212-youtools
+
+
+volumes:
+  youtools-postgres-db:
+    driver: local
+    name: youtools-postgres-database
+  youtools-redis-cache-data:
+    driver: local
+    name: youtools-redis-cache-database
+  youtools-static:
+    driver: local
+    name: youtools-static-volume
+  youtools-media:
+    driver: local
+    name: youtools-media-volume
+  youtools-redis-insight_data:
+    driver: local
+    name: youtools-redis-insight_data
+
+networks:
+  youtools_app_network:
+    driver: bridge
+      

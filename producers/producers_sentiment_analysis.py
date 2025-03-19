@@ -40,7 +40,7 @@ class RabbitMQConnection:
         try:
             channel.basic_publish(
                 exchange='',
-                routing_key='sent_user_data-queue_sentiment_analysis_flask',
+                routing_key='sent_data-queue_sentiment_analysis_flask',
                 body= json.dumps(body),
                 properties=properies
             )

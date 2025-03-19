@@ -4,6 +4,7 @@
 """
 
 from django.contrib import admin
+from django.apps import apps
 from .models import ProductList
 
 # Register your models here.
@@ -17,3 +18,5 @@ class CategoryModelAdmin(admin.ModelAdmin):
     list_display = [
       'id','product_name', 'product_description'
     ]
+
+apps.get_app_config('products').verbose_name = "Flask Products Management"

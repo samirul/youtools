@@ -1,7 +1,11 @@
 {
     "cSpell.words": [
         "allauth",
+        "appendleft",
+        "dotenv",
+        "popleft",
         "socialaccount",
-        "sociallogin"
+        "sociallogin",
+        "youtools"
     ]
 }

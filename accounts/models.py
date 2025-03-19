@@ -89,7 +89,7 @@ class User(AbstractBaseUser):
     )
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     username = models.CharField(max_length=100, unique = True)
-    profilePic = models.ImageField(upload_to='profile-pic', default="default.png")
+    profilePic = models.ImageField(upload_to='profile-pic', default="/profile-pic/default.png")
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -98,7 +98,11 @@ class User(AbstractBaseUser):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['username']
+
+    class Meta:
+        """Added custom model name."""
+        verbose_name_plural = "User accounts"
 
     def get_all_permissions(self, user=None):
         """Check for all the permissions in the model.
@@ -164,7 +168,7 @@ def save_google_profile_image(sender, request, user, **kwargs):
         extra_data = social_account.extra_data
         profile_image_url = extra_data.get('picture')
         
-        if profile_image_url and pic.profilePic =='default.png':
+        if profile_image_url and pic.profilePic =='/profile-pic/default.png':
             response = requests.get(profile_image_url, timeout=5)
             if response.status_code == 200:
                 user.profilePic.save(
